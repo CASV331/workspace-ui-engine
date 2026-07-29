@@ -1,8 +1,13 @@
+import { APP_REGISTRY } from "../../core/apps/registry"
+
 export function desktopReducer(state, action) {
     switch (action.type) {
         case "WINDOW_OPEN": {
+            const app = APP_REGISTRY[action.payload.type]
+            console.log(action.payload.type)
             const newWindow = {
-                id: `win_${Date.now()}`, type: action.payload.type,
+                id: `win_${Date.now()}`,
+                type: action.payload.type,
                 position: { x: 50 + Math.random() * 100, y: 50 + Math.random() * 50 },
                 size: { width: 400, height: 300 },
                 isMinimized: false,

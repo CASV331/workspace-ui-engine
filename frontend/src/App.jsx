@@ -18,11 +18,9 @@ function App() {
 
   return (
     <ConfigProvider>
-      <Header />
-      <div className='flex flex-col items-center gap-6 lg:gap-4 p-4 bg-gray-900 min-h-[96vh] text-white lg:flex-row lg:items-start'>
+      <div className='flex flex-col items-center lg:justify-center gap-6 lg:gap-4 p-4 bg-gray-900 h-screen text-white lg:flex-row lg:items-start'>
         <Preview />
       </div>
-      <WallpaperPicker />
     </ConfigProvider>
   )
 }
