@@ -1,7 +1,7 @@
 import { useReducer } from "react";
 import { createContext, useContext, useState } from "react";
-// import { applyTheme } from "../core/theme/applyTheme.js";
 import { desktopReducer } from "./reducers/desktopReducer.js"
+import { APP_REGISTRY } from "../core/apps/registry.js";
 // Themes imports 
 import { buildConfigFromTokens } from "../core/theme/buildConfig.js";
 import { defaultTheme, themes } from "../core/theme/themeTokens.js"
@@ -45,11 +45,14 @@ export function ConfigProvider({ children }) {
         }))
     }
 
-    const openWindow = (type) => dispatch({
+    const openWindow = (type) => {
+        const app = APP_REGISTRY[type]
+        dispatch({
         type: "WINDOW_OPEN",
         payload: { type }
+        
     })
-
+    }
     const closeFocusedWindow = () => dispatch({
         type: "WINDOW_CLOSE"
     })

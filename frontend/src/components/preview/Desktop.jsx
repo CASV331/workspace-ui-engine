@@ -6,7 +6,12 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { calculateLayout, buildTree } from "../Tiling";
 import { ThemeDmenu } from "../../features/menu/Menu";
 import { APP_REGISTRY } from "../../core/apps/registry";
+import { MusicPlayer } from "../../features/music_player/Music_player";
 
+const COMPONENTS = {
+  "terminal": Terminal,
+  "rmpc": MusicPlayer
+}
 function Preview() {
   const {
     config,
@@ -91,13 +96,17 @@ function Preview() {
   }, []);
 
   const layout = useMemo(() => {
+     console.log("containerSize:", containerSize)
+  console.log("currentWindows:", currentWindows.length)
     if (currentWindows.length === 0) return {};
     if (containerSize.width === 0) return {};
 
     const { width, height } = containerRef.current.getBoundingClientRect();
-
+console.log("container real:", width, height)
     const tree = buildTree(currentWindows);
+    console.log("tree:", tree)
     return calculateLayout(tree, 0, 0, width, height);
+    console.log("layout:", result)
   }, [currentWindows, containerSize]);
 
   const isModPressed = useRef(false);
@@ -178,18 +187,20 @@ function Preview() {
           className="relative flex-1 w-full justify-between"
         >
           {currentWindows.map((win) => {
-            const app = APP_REGISTRY[win.type];
-            const AppComponent = app?.component;
+            console.log("win.id: ", win.id, "Layout entry:", layout[win.id])
+            const AppComponent = COMPONENTS[win.type];
+            console.log(win.type)
             return (
-              <Window key={win.id} windowData={win}>
-                {AppComponent ? (
-                  <AppComponent />
-                ) : (
-                  <div className="p-4 text-red-400 font-mono text-xs">
-                    command not found: {win.type}
-                  </div>
-                )}
-              </Window>
+              <Window key={win.id} windowData={{
+              ...win,
+              position: { x: layout[win.id]?.x ?? 0, y: layout[win.id]?.y ?? 0 },
+              size: {
+                width: layout[win.id]?.width ?? 300,
+                height: layout[win.id]?.height ?? 200
+              }
+            }}>
+              {win.type === "rmpc" && <Terminal />}
+            </Window>
             );
           })}
         </div>

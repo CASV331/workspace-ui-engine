@@ -71,7 +71,7 @@ export function Window({ windowData, children }) {
 
     return (
         <div
-            className={`flex absolute p-2 rounded-lg  overflow-auto 
+            className={`flex absolute rounded-lg  overflow-auto 
         ${isModPressed.current && "cursor-grab"}
         `}
             style={{

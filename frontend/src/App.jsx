@@ -4,6 +4,7 @@ import Sidebar from './components/layout/sidebar/Sidebar.jsx';
 import Preview from './components/preview/Desktop.jsx';
 import { WallpaperPicker } from './components/WallpaperPicker.jsx';
 import { ConfigProvider } from './contexts/ConfigContext.jsx';
+import { PlayerProvider } from './contexts/PlayerContext.jsx';
 // import { initializeTheme } from './core/theme/themeStorage.js';
 import './index.css';
 import './styles/globals.css';
@@ -18,9 +19,11 @@ function App() {
 
   return (
     <ConfigProvider>
+      <PlayerProvider>
       <div className='flex flex-col items-center lg:justify-center gap-6 lg:gap-4 p-4 bg-gray-900 h-screen text-white lg:flex-row lg:items-start'>
         <Preview />
       </div>
+      </PlayerProvider>
     </ConfigProvider>
   )
 }
