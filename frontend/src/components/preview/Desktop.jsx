@@ -8,7 +8,7 @@ import { ThemeDmenu } from "../../features/menu/Menu";
 import { APP_REGISTRY } from "../../core/apps/registry";
 import { MusicPlayer } from "../../features/music_player/Music_player";
 
-const COMPONENTS = {
+const APPS = {
   "terminal": Terminal,
   "rmpc": MusicPlayer
 }
@@ -96,17 +96,14 @@ function Preview() {
   }, []);
 
   const layout = useMemo(() => {
-     console.log("containerSize:", containerSize)
-  console.log("currentWindows:", currentWindows.length)
     if (currentWindows.length === 0) return {};
     if (containerSize.width === 0) return {};
 
     const { width, height } = containerRef.current.getBoundingClientRect();
-console.log("container real:", width, height)
+
     const tree = buildTree(currentWindows);
-    console.log("tree:", tree)
+    
     return calculateLayout(tree, 0, 0, width, height);
-    console.log("layout:", result)
   }, [currentWindows, containerSize]);
 
   const isModPressed = useRef(false);
@@ -188,7 +185,7 @@ console.log("container real:", width, height)
         >
           {currentWindows.map((win) => {
             console.log("win.id: ", win.id, "Layout entry:", layout[win.id])
-            const AppComponent = COMPONENTS[win.type];
+            const App = APPS[win.type];
             console.log(win.type)
             return (
               <Window key={win.id} windowData={{
@@ -199,7 +196,7 @@ console.log("container real:", width, height)
                 height: layout[win.id]?.height ?? 200
               }
             }}>
-              {win.type === "rmpc" && <Terminal />}
+              {App && <App />}
             </Window>
             );
           })}

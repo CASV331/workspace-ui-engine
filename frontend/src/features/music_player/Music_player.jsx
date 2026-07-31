@@ -1,32 +1,76 @@
 // components/apps/MusicPlayer.jsx
-import { usePlayer } from "../../contexts/PlayerContext"
-import { useConfig } from "../../contexts/ConfigContext"
+import { usePlayer } from "../../contexts/PlayerContext";
+import { useConfig } from "../../contexts/ConfigContext";
+import { useMemo } from "react";
+
+const hexToRgba = (hex, opacity) => {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+};
 
 export function MusicPlayer() {
-  const { config } = useConfig()
-  const { primary, surface, surfaceVariant, onSurface, outline } = config.colors
-  const { playerState, currentSong, songs, togglePlay, next, prev, seek, setVolume, selectSong } = usePlayer()
-  const { isPlaying, currentTime, duration, volume, currentIndex } = playerState
+  const { config } = useConfig();
+  const { primary, surface, surfaceVariant, onSurface, outline } =
+    config.colors;
+  const {
+    background,
+    backgroundOpacity,
+    borderColor,
+    borderOpacity,
+    borderWidth,
+    textColor,
+    fontSize,
+  } = config.terminal;
+  const bgColor = useMemo(
+    () => hexToRgba(background, backgroundOpacity),
+    [background, backgroundOpacity],
+  );
+  const {
+    playerState,
+    currentSong,
+    songs,
+    togglePlay,
+    next,
+    prev,
+    seek,
+    setVolume,
+    selectSong,
+  } = usePlayer();
+  const { isPlaying, currentTime, duration, volume, currentIndex } =
+    playerState;
 
   const formatTime = (s) => {
-    const m = Math.floor(s / 60).toString().padStart(2, "0")
-    const sec = Math.floor(s % 60).toString().padStart(2, "0")
-    return `${m}:${sec}`
-  }
+    const m = Math.floor(s / 60)
+      .toString()
+      .padStart(2, "0");
+    const sec = Math.floor(s % 60)
+      .toString()
+      .padStart(2, "0");
+    return `${m}:${sec}`;
+  };
+
+  console.log(currentSong);
 
   return (
     <div
-      className="flex flex-col h-full gap-3 p-4 font-mono text-xs"
-      style={{ backgroundColor: surface, color: onSurface }}
+      className="flex flex-col w-full h-full gap-3 p-4 font-mono text-xs"
+      style={{ backgroundColor: bgColor, color: onSurface }}
     >
       {/* Header */}
       <div className="flex justify-between" style={{ color: outline }}>
         <span>rmpc</span>
-        <span>{currentIndex + 1} / {songs.length}</span>
+        <span>
+          {currentIndex + 1} / {songs.length}
+        </span>
       </div>
 
       {/* Info canción */}
-      <div className="p-2 rounded border" style={{ backgroundColor: surfaceVariant, borderColor: outline }}>
+      <div
+        className="p-2 rounded border"
+        style={{ backgroundColor: surfaceVariant, borderColor: outline }}
+      >
         <div className="truncate" style={{ color: primary }}>
           {currentSong?.name ?? "Unknown"}
         </div>
@@ -51,11 +95,19 @@ export function MusicPlayer() {
 
       {/* Controles */}
       <div className="flex justify-center items-center gap-6">
-        <button onClick={prev} style={{ color: onSurface }}>⏮</button>
-        <button onClick={togglePlay} className="text-lg" style={{ color: primary }}>
+        <button onClick={prev} style={{ color: onSurface }}>
+          ⏮
+        </button>
+        <button
+          onClick={togglePlay}
+          className="text-lg"
+          style={{ color: primary }}
+        >
           {isPlaying ? "⏸" : "▶"}
         </button>
-        <button onClick={next} style={{ color: onSurface }}>⏭</button>
+        <button onClick={next} style={{ color: onSurface }}>
+          ⏭
+        </button>
       </div>
 
       {/* Volumen */}
@@ -75,14 +127,18 @@ export function MusicPlayer() {
       </div>
 
       {/* Lista */}
-      <div className="flex-1 overflow-y-auto border rounded" style={{ borderColor: outline }}>
+      <div
+        className="flex-1 overflow-y-auto border rounded"
+        style={{ borderColor: outline }}
+      >
         {songs.map((song, i) => (
           <button
             key={song.id}
             onClick={() => selectSong(i)}
             className="w-full text-left px-2 py-1 truncate hover:opacity-70"
             style={{
-              backgroundColor: i === currentIndex ? surfaceVariant : "transparent",
+              backgroundColor:
+                i === currentIndex ? surfaceVariant : "transparent",
               color: i === currentIndex ? primary : onSurface,
             }}
           >
@@ -92,5 +148,5 @@ export function MusicPlayer() {
         ))}
       </div>
     </div>
-  )
+  );
 }

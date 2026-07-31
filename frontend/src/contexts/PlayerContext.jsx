@@ -21,6 +21,7 @@ export function PlayerProvider({ children }) {
   // Registra los eventos del audio una sola vez
   useEffect(() => {
     const audio = audioRef.current
+    console.log(audio)
 
     const onTimeUpdate  = () => setPlayerState(p => ({ ...p, currentTime: audio.currentTime }))
     const onLoadedMeta  = () => setPlayerState(p => ({ ...p, duration: audio.duration }))
