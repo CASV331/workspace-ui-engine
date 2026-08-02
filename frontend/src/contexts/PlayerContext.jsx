@@ -6,7 +6,25 @@ const PlayerContext = createContext(null)
 
 export function PlayerProvider({ children }) {
   const audioRef = useRef(new Audio())
-  const shouldPlayRef = useRef(false)  // ← resuelve la condición de carrera
+  const analyserRef = useRef(null)
+  const audioContextRef = useRef(null)
+
+  const shouldPlayRef = useRef(false)
+
+  const initAnalyser = () => {
+    if (audioContextRef.current) return
+    
+    const ctx = new AudioContext()
+    const analyser = ctx.createAnalyser()
+    analyser.fftSize = 128
+
+    const source = ctx.createMediaElementSource(audioRef.current)
+    source.connect(analyser)
+    analyser.connect(ctx.destination)
+
+    audioContextRef.current = ctx
+    analyserRef.current = analyser
+  }
 
   const [playerState, setPlayerState] = useState({
     currentIndex: 0,
@@ -63,6 +81,7 @@ export function PlayerProvider({ children }) {
   }, [playerState.volume])
 
   const play = () => {
+    initAnalyser()
     shouldPlayRef.current = true
     audioRef.current.play()
     setPlayerState(p => ({ ...p, isPlaying: true }))
@@ -111,6 +130,7 @@ export function PlayerProvider({ children }) {
     <PlayerContext.Provider value={{
       playerState,
       currentSong,
+      analyserRef,
       songs: BUILTIN_SONGS,
       togglePlay,
       next,

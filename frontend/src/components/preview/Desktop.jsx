@@ -7,10 +7,12 @@ import { calculateLayout, buildTree } from "../Tiling";
 import { ThemeDmenu } from "../../features/menu/Menu";
 import { APP_REGISTRY } from "../../core/apps/registry";
 import { MusicPlayer } from "../../features/music_player/Music_player";
+import { AudioVisualizer } from "../../features/audio_visualizer/AudioVisualizer";
 
 const APPS = {
   "terminal": Terminal,
-  "rmpc": MusicPlayer
+  "rmpc": MusicPlayer,
+  "cava": AudioVisualizer
 }
 function Preview() {
   const {
@@ -132,6 +134,10 @@ function Preview() {
         if (e.key === "m") {
           e.preventDefault();
           openWindow("rmpc")
+        }
+        if (e.key === "a") {
+          e.preventDefault()
+          openWindow("cava")
         }
 
         if (e.key === "ArrowRight") moveFocusRef.current("right");

@@ -4,7 +4,10 @@ export const APP_REGISTRY = {
         title: "rmpc",
     },
     "terminal": {
-        tittle: "terminal",
+        title: "terminal",
+    },
+    "cava": {
+        title: "cava"
     }
 }
 
