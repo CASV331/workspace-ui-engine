@@ -3,23 +3,14 @@ import { useEffect, useRef, useMemo } from "react";
 import { usePlayer } from "../../contexts/PlayerContext";
 import { useConfig } from "../../contexts/ConfigContext";
 
-const hexToRgba = (hex, opacity) => {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-};
 
 export function AudioVisualizer() {
   const { analyserRef, playerState, currentSong } = usePlayer();
   const { config } = useConfig();
-  const { primary, surface, outline, background } = config.colors;
-  const { backgroundOpacity } = config.terminal;
+  const { primary, surface, outline } = config.colors;
+  const { background, backgroundOpacity } = config.window;
 
-  const bgColor = useMemo(
-    () => hexToRgba(background, backgroundOpacity),
-    [background, backgroundOpacity],
-  );
+
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
 
@@ -96,12 +87,12 @@ export function AudioVisualizer() {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [analyserRef.current, primary, surface, outline, bgColor]);
+  }, [analyserRef.current, primary, surface, outline, background]);
 
   return (
     <div
       className="flex flex-col h-full"
-      style={{ backgroundColor: bgColor }}
+      style={{ backgroundColor: background }}
       ref={containerRef}
     >
       {/* Header estilo terminal

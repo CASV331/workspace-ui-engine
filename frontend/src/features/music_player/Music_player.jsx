@@ -3,17 +3,15 @@ import { usePlayer } from "../../contexts/PlayerContext";
 import { useConfig } from "../../contexts/ConfigContext";
 import { useMemo } from "react";
 
-const hexToRgba = (hex, opacity) => {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-};
-
 export function MusicPlayer() {
   const { config } = useConfig();
-  const { primary, surface, surfaceVariant, onSurface, outline } =
-    config.colors;
+  const {
+    primary,
+    surface,
+    surfaceVariant,
+    onSurface,
+    outline
+  } = config.colors;
   const {
     background,
     backgroundOpacity,
@@ -22,11 +20,9 @@ export function MusicPlayer() {
     borderWidth,
     textColor,
     fontSize,
-  } = config.terminal;
-  const bgColor = useMemo(
-    () => hexToRgba(background, backgroundOpacity),
-    [background, backgroundOpacity],
-  );
+  } = config.window;
+
+
   const {
     playerState,
     currentSong,
@@ -51,12 +47,11 @@ export function MusicPlayer() {
     return `${m}:${sec}`;
   };
 
-  console.log(currentSong);
 
   return (
     <div
       className="flex flex-col w-full h-full gap-3 p-4 font-mono text-xs"
-      style={{ backgroundColor: bgColor, color: onSurface }}
+      style={{ backgroundColor: background, color: onSurface }}
     >
       {/* Header */}
       <div className="flex justify-between" style={{ color: outline }}>

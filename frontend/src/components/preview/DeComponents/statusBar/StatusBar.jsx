@@ -3,13 +3,6 @@ import { useConfig } from "../../../../contexts/ConfigContext";
 import { BarIcon } from "./shared/BarIcon";
 import { Battery } from "./right/ Battery";
 
-const hexToRgba = (hex, opacity) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-};
-
 export function StatusBar() {
     const { config, desktopState, switchDesktop } = useConfig();
     const { activeDesktop, desktops } = desktopState
@@ -27,16 +20,6 @@ export function StatusBar() {
         marginRight
     } = config.statusBar;
 
-    const bgColor = useMemo(
-        () => hexToRgba(background, backgroundOpacity),
-        [background, backgroundOpacity]
-    );
-
-    const borderColorRgba = useMemo(
-        () => hexToRgba(borderColor, borderOpacity),
-        [borderColor, borderOpacity]
-    );
-
 
     const [time, setTime] = useState(new Date());
     useEffect(() => {
@@ -52,9 +35,9 @@ export function StatusBar() {
     return (
         <div className="items-center max-h-9">
             <div
-                className="flex items-center justify-between"
+                className="flex items-center"
                 style={{
-                    backgroundColor: bgColor,
+                    backgroundColor: background,
                     // borderTop: '0px',
                     // border: `${borderWidth}px solid ${borderColor}`,
                     color: textColor,
@@ -62,7 +45,7 @@ export function StatusBar() {
                     // margin: `${marginTop}px ${marginRight}px ${marginBottom}px ${marginLeft}px`,
                 }}
             >
-                <div className="flex justify-end items-center p-0.5 rounded-lg ml-1">
+                <div className="flex flex-1 justify-start items-center px-2">
                     <div className="flex">
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9].filter(desktop =>
                             desktops[desktop].windows.length > 0 || desktop === activeDesktop
@@ -73,11 +56,11 @@ export function StatusBar() {
                                     onClick={() => switchDesktop(desktop)}
                                     className={"px-2 py-1 border rounded-lg mx-0.5"}
                                     style={{
-                                        backgroundColor: desktop === activeDesktop ? bgColor : "transparent",
-                                        border: `1px solid ${desktop === activeDesktop ? borderColor : bgColor}`,
+                                        backgroundColor: desktop === activeDesktop ? background : "transparent",
+                                        border: `1px solid ${desktop === activeDesktop ? borderColor : background}`,
                                         hover: {
                                             border: borderColor,
-                                            background: bgColor
+                                            background
                                         }
                                     }}
                                 >
@@ -88,17 +71,17 @@ export function StatusBar() {
                     </div>
                 </div>
 
-                <div className="flex justify-end items-center m-auto">
+                <div className="flex flex-1 justify-center items-center">
                     <div className="text-center rounded-lg font-bold"
                         style={{
-                            backgroundColor: bgColor,
+                            backgroundColor: background,
                             padding: "4px 14px"
                         }}>
                         {formattedTime}
                     </div>
                 </div>
 
-                <div className="flex justify-end items-center p-1 mr-1">
+                <div className="flex flex-1 justify-end items-center px-2">
                     <div className="flex flex-1 items-center justify-end gap-4">
                         <div className="flex items-center gap-1">
                             SSID Name

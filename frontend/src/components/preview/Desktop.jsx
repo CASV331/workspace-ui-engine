@@ -8,6 +8,7 @@ import { ThemeDmenu } from "../../features/menu/Menu";
 import { APP_REGISTRY } from "../../core/apps/registry";
 import { MusicPlayer } from "../../features/music_player/Music_player";
 import { AudioVisualizer } from "../../features/audio_visualizer/AudioVisualizer";
+import { playCloseAnimation } from "../../core/animation/animationEngine";
 
 const APPS = {
   "terminal": Terminal,
@@ -31,9 +32,9 @@ function Preview() {
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
 
   const containerRef = useRef(null);
+  const focused = currentWindows.find((win) => win.isFocused === true);
 
   const moveFocus = (direction) => {
-    const focused = currentWindows.find((win) => win.isFocused === true);
     if (!focused) return;
 
     const focusedLayout = layout[focused.id];
@@ -125,6 +126,7 @@ function Preview() {
           openWindow("terminal");
         }
         if (e.key === "Backspace") {
+          playCloseAnimation(focused.id, )
           closeFocusedWindow();
         }
         if (e.key === "d") {
@@ -190,9 +192,8 @@ function Preview() {
           className="relative flex-1 w-full justify-between"
         >
           {currentWindows.map((win) => {
-            console.log("win.id: ", win.id, "Layout entry:", layout[win.id])
+            console.log(win)
             const App = APPS[win.type];
-            console.log(win.type)
             return (
               <Window key={win.id} windowData={{
               ...win,

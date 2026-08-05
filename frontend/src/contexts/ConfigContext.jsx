@@ -6,6 +6,7 @@ import { APP_REGISTRY } from "../core/apps/registry.js";
 import { buildConfigFromTokens } from "../core/theme/buildConfig.js";
 import { defaultTheme, themes } from "../core/theme/themeTokens.js"
 import { loadSavedTheme, saveTheme } from "../core/theme/themeStorage.js"
+import { playCloseAnimation, playOpenAnimation } from "../core/animation/animationEngine.js";
 
 const defaultDesktopState = {
     activeDesktop: 1,
@@ -47,11 +48,16 @@ export function ConfigProvider({ children }) {
 
     const openWindow = (type) => {
         const app = APP_REGISTRY[type]
+        const id = `win_${Date.now()}`
         dispatch({
         type: "WINDOW_OPEN",
-        payload: { type }
+        payload: { 
+            id,
+            type 
+        }
         
     })
+    playOpenAnimation(id, dispatch)
     }
     const closeFocusedWindow = () => dispatch({
         type: "WINDOW_CLOSE"

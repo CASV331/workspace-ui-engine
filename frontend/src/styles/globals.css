@@ -1,0 +1,20 @@
+.window {
+    transition:
+        transform 180ms cubic-bezier(.22,1,.36,1),
+        opacity 180ms;
+}
+
+.window[data-animation="opening"]{
+    opacity: 0;
+    transform: scale(.92);
+}
+
+.window[data-animation="opened"]{
+    opacity: 1;
+    transform: scale(1);
+}
+
+.window[data-animation="closing"]{
+    opacity: 0;
+    transform: scale(.95);
+}

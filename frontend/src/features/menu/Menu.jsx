@@ -2,13 +2,6 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useConfig } from "../../contexts/ConfigContext";
 import { themes } from "../../core/theme/themeTokens";
 
-const hexToRgba = (hex, opacity) => {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-};
-
 export function ThemeDmenu({ isOpen, onClose }) {
   const { config, setTheme } = useConfig()
   const [query, setQuery] = useState("")
@@ -22,20 +15,11 @@ export function ThemeDmenu({ isOpen, onClose }) {
     borderWidth,
     textColor,
     fontSize
-  } = config.terminal
+  } = config.window
 
   const filtered = Object.entries(themes).filter(([_, theme]) =>
     theme.name.toLowerCase().includes(query.toLowerCase()))
 
-  const bgColor = useMemo(
-    () => hexToRgba(background, backgroundOpacity),
-    [background, backgroundOpacity]
-  );
-
-  const borderColorRgba = useMemo(
-    () => hexToRgba(borderColor, borderOpacity),
-    [borderColor, borderOpacity]
-  );
 
   // useEffect(() => {
   //   if (isOpen) {
