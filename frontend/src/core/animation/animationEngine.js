@@ -19,7 +19,7 @@ export function playOpenAnimation(windowId, dispatch) {
 }
 
 export function playCloseAnimation(windowId, dispatch) {
-
+    console.log(windowId, dispatch)
     dispatch({
         type: "SET_WINDOW_ANIMATION",
         id: windowId,

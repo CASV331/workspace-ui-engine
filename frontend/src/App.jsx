@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import Header from './components/layout/header/Header.jsx';
 import Sidebar from './components/layout/sidebar/Sidebar.jsx';
 import Preview from './components/preview/Desktop.jsx';
-import { WallpaperPicker } from './components/WallpaperPicker.jsx';
 import { ConfigProvider } from './contexts/ConfigContext.jsx';
 import { PlayerProvider } from './contexts/PlayerContext.jsx';
 // import { initializeTheme } from './core/theme/themeStorage.js';

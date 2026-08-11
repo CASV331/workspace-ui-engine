@@ -59,9 +59,15 @@ export function ConfigProvider({ children }) {
     })
     playOpenAnimation(id, dispatch)
     }
-    const closeFocusedWindow = () => dispatch({
-        type: "WINDOW_CLOSE"
+    const closeFocusedWindow = (id) => {
+        dispatch({
+        type: "WINDOW_CLOSE",
+        payload: {
+            id
+        }
     })
+    playCloseAnimation(id, dispatch)
+}
 
     const focusWindow = (windowId) => dispatch({
         type: "WINDOW_FOCUS",

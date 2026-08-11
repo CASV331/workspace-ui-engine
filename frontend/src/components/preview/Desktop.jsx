@@ -126,8 +126,7 @@ function Preview() {
           openWindow("terminal");
         }
         if (e.key === "Backspace") {
-          playCloseAnimation(focused.id, )
-          closeFocusedWindow();
+          closeFocusedWindow(focusWindow.id);
         }
         if (e.key === "d") {
           e.preventDefault();
@@ -192,7 +191,6 @@ function Preview() {
           className="relative flex-1 w-full justify-between"
         >
           {currentWindows.map((win) => {
-            console.log(win)
             const App = APPS[win.type];
             return (
               <Window key={win.id} windowData={{
