@@ -68,7 +68,6 @@ export function Window({ windowData, children }) {
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
   };
-console.log(windowData.animation.state)
   return (
     <div
       className={`flex absolute rounded-lg  overflow-auto window 

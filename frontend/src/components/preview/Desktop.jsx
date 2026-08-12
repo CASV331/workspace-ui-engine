@@ -126,7 +126,8 @@ function Preview() {
           openWindow("terminal");
         }
         if (e.key === "Backspace") {
-          closeFocusedWindow(focusWindow.id);
+          e.preventDefault()
+          closeFocusedWindow(focused.id);
         }
         if (e.key === "d") {
           e.preventDefault();

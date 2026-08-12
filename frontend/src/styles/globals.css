@@ -18,3 +18,7 @@
     opacity: 0;
     transform: scale(.95);
 }
+
+.window[data-animation="moving"]{
+    transform: translateX(100%)
+}

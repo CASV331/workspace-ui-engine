@@ -1,5 +1,4 @@
 export function playOpenAnimation(windowId, dispatch) {
-    console.log(windowId)
     dispatch({
         type: "SET_WINDOW_ANIMATION",
         id: windowId,
@@ -19,7 +18,7 @@ export function playOpenAnimation(windowId, dispatch) {
 }
 
 export function playCloseAnimation(windowId, dispatch) {
-    console.log(windowId, dispatch)
+    console.log(windowId)
     dispatch({
         type: "SET_WINDOW_ANIMATION",
         id: windowId,
@@ -29,10 +28,19 @@ export function playCloseAnimation(windowId, dispatch) {
     setTimeout(() => {
 
         dispatch({
-            type: "REMOVE_WINDOW",
+            type: "WINDOW_CLOSE",
             id: windowId
         });
 
     },180);
 
+}
+
+export function playWorkspaceSwitchAnimation(desktop, dispatch) {
+    console.log(desktop, dispatch)
+    dispatch({
+        type: "SET_DESKTOP_ANIMATION",
+        desktop,
+        state: "moving"
+    })
 }
