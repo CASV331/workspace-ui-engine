@@ -1,0 +1,34 @@
+{
+  "keybinds": [
+    {
+      "id": 1,
+      "feature": "Terminal",
+      "keybind": ["Z", "Enter"]
+    },
+    {
+        "id": 2,
+        "feature": "Quit",
+        "keybind": ["Z", "Q"] 
+    },
+    {
+        "id": 3,
+        "feature": "Workspaces selection",
+        "keybind": ["Z", "Num"]
+    },
+    {
+        "id": 4,
+        "feature": "Move windows to workspaces",
+        "keybind": ["Z", "P", "Num"]
+    },
+    {
+        "id": 5,
+        "feature": "Music Player",
+        "keybind": ["Z", "M"]
+    },
+    {
+        "id": 6,
+        "feature": "Audio Visualizer",
+        "keybind": ["Z", "A"]
+    }
+  ]
+}

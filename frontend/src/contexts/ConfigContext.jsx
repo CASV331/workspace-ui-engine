@@ -9,7 +9,7 @@ import { loadSavedTheme, saveTheme } from "../core/theme/themeStorage.js";
 import {
   playCloseAnimation,
   playOpenAnimation,
-  playWorkspaceSwitchAnimation,
+  
 } from "../core/animation/animationEngine.js";
 
 const defaultDesktopState = {
@@ -92,7 +92,7 @@ export function ConfigProvider({ children }) {
       type: "DESKTOP_SWITCH",
       payload: { desktopNumber },
     });
-    playWorkspaceSwitchAnimation(desktopNumber, dispatch)
+    // playWorkspaceSwitchAnimation(desktopNumber, dispatch)
 }
 
   const setTheme = (themeName) => {

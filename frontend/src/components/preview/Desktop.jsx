@@ -11,10 +11,10 @@ import { AudioVisualizer } from "../../features/audio_visualizer/AudioVisualizer
 import { playCloseAnimation } from "../../core/animation/animationEngine";
 
 const APPS = {
-  "terminal": Terminal,
-  "rmpc": MusicPlayer,
-  "cava": AudioVisualizer
-}
+  terminal: Terminal,
+  rmpc: MusicPlayer,
+  cava: AudioVisualizer,
+};
 function Preview() {
   const {
     config,
@@ -105,13 +105,14 @@ function Preview() {
     const { width, height } = containerRef.current.getBoundingClientRect();
 
     const tree = buildTree(currentWindows);
-    
+
     return calculateLayout(tree, 0, 0, width, height);
   }, [currentWindows, containerSize]);
 
   const isModPressed = useRef(false);
   const isShiftPressed = useRef(false);
 
+  // To Do: Keybinds.js
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "p") {
@@ -126,7 +127,7 @@ function Preview() {
           openWindow("terminal");
         }
         if (e.key === "Backspace") {
-          e.preventDefault()
+          e.preventDefault();
           closeFocusedWindow(focused.id);
         }
         if (e.key === "d") {
@@ -135,11 +136,11 @@ function Preview() {
         }
         if (e.key === "m") {
           e.preventDefault();
-          openWindow("rmpc")
+          openWindow("rmpc");
         }
         if (e.key === "a") {
-          e.preventDefault()
-          openWindow("cava")
+          e.preventDefault();
+          openWindow("cava");
         }
 
         if (e.key === "ArrowRight") moveFocusRef.current("right");
@@ -173,7 +174,16 @@ function Preview() {
       window.removeEventListener("keyup", handleKeyUp);
     };
   }, [openWindow, closeFocusedWindow, moveFocus]);
-
+  const prevDesktopRef = useRef(desktopState.activeDesktop);
+  const [slideDirection, setSlideDirection] = useState("right");
+  useEffect(() => {
+    const prev = prevDesktopRef.current;
+    const current = desktopState.activeDesktop;
+    if (prev !== current) {
+      setSlideDirection(current > prev ? "right" : "left");
+      prevDesktopRef.current = current;
+    }
+  }, [desktopState.activeDesktop]);
   return (
     <div className="w-10/12 aspect-video z-10 p-2 border-4 rounded-xl border-gray-700 desktop-preview-container sticky top-0 bg-gray-900">
       <div
@@ -186,26 +196,36 @@ function Preview() {
         }}
       >
         <StatusBar />
-
         <div
-          ref={containerRef}
-          className="relative flex-1 w-full justify-between"
+          key={desktopState.activeDesktop} // fuerza remount al cambiar de escritorio
+          className={`workspace-slide-${slideDirection} relative flex flex-1 w-full p-2`}
         >
-          {currentWindows.map((win) => {
-            const App = APPS[win.type];
-            return (
-              <Window key={win.id} windowData={{
-              ...win,
-              position: { x: layout[win.id]?.x ?? 0, y: layout[win.id]?.y ?? 0 },
-              size: {
-                width: layout[win.id]?.width ?? 300,
-                height: layout[win.id]?.height ?? 200
-              }
-            }}>
-              {App && <App />}
-            </Window>
-            );
-          })}
+          <div
+            ref={containerRef}
+            className="relative flex-1 w-full justify-between"
+          >
+            {currentWindows.map((win) => {
+              const App = APPS[win.type];
+              return (
+                <Window
+                  key={win.id}
+                  windowData={{
+                    ...win,
+                    position: {
+                      x: layout[win.id]?.x ?? 0,
+                      y: layout[win.id]?.y ?? 0,
+                    },
+                    size: {
+                      width: layout[win.id]?.width ?? 300,
+                      height: layout[win.id]?.height ?? 200,
+                    },
+                  }}
+                >
+                  {App && <App />}
+                </Window>
+              );
+            })}
+          </div>
         </div>
         <ThemeDmenu isOpen={dmenuOpen} onClose={() => setDmenuOpen(false)} />
       </div>

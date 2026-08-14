@@ -36,11 +36,21 @@ export function playCloseAnimation(windowId, dispatch) {
 
 }
 
-export function playWorkspaceSwitchAnimation(desktop, dispatch) {
-    console.log(desktop, dispatch)
-    dispatch({
-        type: "SET_DESKTOP_ANIMATION",
-        desktop,
-        state: "moving"
-    })
-}
+// export function playWorkspaceSwitchAnimation(desktop, dispatch) {
+    
+//     dispatch({
+//         type: "SET_DESKTOP_ANIMATION",
+//         desktop,
+//         state: "moving"
+//     })
+    
+//     const ANIMATION_DURATION = 300;
+
+//   setTimeout(() => {
+//     dispatch({
+//       type: "SET_DESKTOP_ANIMATION",
+//       desktop,
+//       state: "opened",
+//     });
+//   }, ANIMATION_DURATION);
+// }

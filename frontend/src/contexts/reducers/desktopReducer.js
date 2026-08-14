@@ -123,34 +123,34 @@ export function desktopReducer(state, action) {
       return { ...state, activeDesktop: action.payload.desktopNumber };
     }
 
-    case "SET_DESKTOP_ANIMATION": {
-      console.log(
-        state.desktops[state.activeDesktop].windows.map((w) => ({
-          id: w.id,
-          animation: w.animation.state,
-        })),
-      );
-      return {
-        ...state,
-        desktops: {
-          ...state.desktops,
-          [state.activeDesktop]: {
-            windows: state.desktops[state.activeDesktop].windows.map(
-              (window) =>
-                window.id === action.id
-                  ? {
-                      ...window,
-                      animation: {
-                        ...window.animation,
-                        state: action.state,
-                      },
-                    }
-                  : window,
-            ),
-          },
-        },
-      };
-    }
+  //   case "SET_DESKTOP_ANIMATION": {
+  //     console.log(
+  //   state.desktops[action.desktop].windows.map((w) => ({
+  //     id: w.id,
+  //     action: action,
+  //   })),
+  // );
+  //     const targetDesktop = state.desktops[action.desktop]
+  //     const targetWindow = state.desktops[targetDesktop]?.windows ?? []
+
+  //     return {
+  //       ...state,
+  //       desktops: {
+  //         ...state.desktops,
+  //         [targetDesktop]: {
+  //           windows: targetWindow.map(
+  //             (window) => ({
+  //               ...window,
+  //               animation: {
+  //                 ...(window.animation || {}),
+  //                 state: action.state
+
+  //               }
+  //             }))
+  //       },
+  //     }
+  //   }
+  // }
 
     case "SET_WINDOW_ANIMATION":
       return {
