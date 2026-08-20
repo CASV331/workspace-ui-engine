@@ -51,7 +51,7 @@ export function MusicPlayer() {
   return (
     <div
       className="flex flex-col w-full h-full gap-3 p-4 font-mono text-xs"
-      style={{ backgroundColor: background, color: onSurface }}
+      style={{ backgroundColor: "transparent", color: onSurface }}
     >
       {/* Header */}
       <div className="flex justify-between" style={{ color: outline }}>

@@ -15,11 +15,11 @@ export const themes = {
         name: "Gruvbox Dark",
         wallpaper: "/assets/wallpapers/gruvbox.png",
         tokens: {
-            primary: "#d79921",
+            primary: "#ebdbb2",
             secondary: "#689d6a",
-            surface: "#282828",
-            background: "#1d2021",
-            onSurface: "#ebdbb2",
+            surface: "#928374",
+            background: "#282828",
+            onSurface: "#fbf1c7",
             outline: "#504945",
         }
     },

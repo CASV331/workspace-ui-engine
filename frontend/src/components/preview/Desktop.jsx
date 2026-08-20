@@ -9,11 +9,19 @@ import { APP_REGISTRY } from "../../core/apps/registry";
 import { MusicPlayer } from "../../features/music_player/Music_player";
 import { AudioVisualizer } from "../../features/audio_visualizer/AudioVisualizer";
 import { playCloseAnimation } from "../../core/animation/animationEngine";
+import BootScreen from "../../core/boot/BootScreen";
+import { HelpWindow } from "../../features/help/HelpWindow";
+import { Welcome } from "../../features/welcome/Welcome";
+import { useKeybinds } from "../../core/keybinds/keybinds";
+import { FileManager} from "../../features/File_manager/FileManager";
 
 const APPS = {
   terminal: Terminal,
   rmpc: MusicPlayer,
   cava: AudioVisualizer,
+  help: HelpWindow,
+  welcome: Welcome,
+  fileManager: FileManager
 };
 function Preview() {
   const {
@@ -25,14 +33,68 @@ function Preview() {
     switchDesktop,
     switchWindowDesktop,
   } = useConfig();
+
+  // State
+  const [dmenuOpen, setDmenuOpen] = useState(false);
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  const [slideDirection, setSlideDirection] = useState("right");
+  const [booted, setBooted] = useState(false);
+  // Ref
+  const prevDesktopRef = useRef(desktopState.activeDesktop);
+  const containerRef = useRef(null);
   const { activeDesktop, desktops } = desktopState;
   const currentWindows = desktops[activeDesktop].windows;
-  const [dmenuOpen, setDmenuOpen] = useState(false);
-
-  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
-
-  const containerRef = useRef(null);
+  // Get focused window
   const focused = currentWindows.find((win) => win.isFocused === true);
+
+  // Calculate layout
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const { width, height } = containerRef.current.getBoundingClientRect();
+    setContainerSize({ width, height });
+  }, []);
+  
+  useEffect(() => {
+  const el = containerRef.current;
+  if (!el) return;
+
+  const updateSize = () => {
+    const rect = el.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) {
+      setContainerSize({ width: rect.width, height: rect.height });
+    }
+  };
+
+  // Medición inicial inmediata
+  updateSize();
+
+  // Observar cambios de tamaño
+  const observer = new ResizeObserver(updateSize);
+  observer.observe(el);
+
+  return () => observer.disconnect();
+}, []);
+
+  const layout = useMemo(() => {
+    if (currentWindows.length === 0) return {};
+    if (containerSize.width === 0) return {};
+
+    // const { width, height } = containerRef.current.getBoundingClientRect();
+
+    const tree = buildTree(currentWindows);
+
+    return calculateLayout(tree, 0, 0, containerSize.width, containerSize.height);
+  }, [currentWindows, containerSize]);
+
+    useEffect(() => {
+    const prev = prevDesktopRef.current;
+    const current = desktopState.activeDesktop;
+    if (prev !== current) {
+      setSlideDirection(current > prev ? "right" : "left");
+      prevDesktopRef.current = current;
+    }
+  }, [desktopState.activeDesktop]);
+
 
   const moveFocus = (direction) => {
     if (!focused) return;
@@ -87,107 +149,22 @@ function Preview() {
     focusWindow(closest.id);
   };
 
-  const moveFocusRef = useRef(moveFocus);
+  useKeybinds({
+    openWindow,
+    closeFocusedWindow,
+    moveFocus,
+    switchDesktop,
+    switchWindowDesktop,
+    setDmenuOpen,
+    focused,
+  });
 
-  useEffect(() => {
-    moveFocusRef.current = moveFocus;
-  }, [moveFocus]);
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const { width, height } = containerRef.current.getBoundingClientRect();
-    setContainerSize({ width, height });
-  }, []);
 
-  const layout = useMemo(() => {
-    if (currentWindows.length === 0) return {};
-    if (containerSize.width === 0) return {};
-
-    const { width, height } = containerRef.current.getBoundingClientRect();
-
-    const tree = buildTree(currentWindows);
-
-    return calculateLayout(tree, 0, 0, width, height);
-  }, [currentWindows, containerSize]);
-
-  const isModPressed = useRef(false);
-  const isShiftPressed = useRef(false);
-
-  // To Do: Keybinds.js
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "p") {
-        isShiftPressed.current = true;
-      }
-      if (e.key === "z") {
-        isModPressed.current = true;
-      }
-      if (isModPressed.current) {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          openWindow("terminal");
-        }
-        if (e.key === "Backspace") {
-          e.preventDefault();
-          closeFocusedWindow(focused.id);
-        }
-        if (e.key === "d") {
-          e.preventDefault();
-          setDmenuOpen((prev) => !prev);
-        }
-        if (e.key === "m") {
-          e.preventDefault();
-          openWindow("rmpc");
-        }
-        if (e.key === "a") {
-          e.preventDefault();
-          openWindow("cava");
-        }
-
-        if (e.key === "ArrowRight") moveFocusRef.current("right");
-        if (e.key === "ArrowLeft") moveFocusRef.current("left");
-        if (e.key === "ArrowUp") moveFocusRef.current("up");
-        if (e.key === "ArrowDown") moveFocusRef.current("down");
-
-        const num = parseInt(e.key);
-
-        if (num >= 1 && num < 9) {
-          e.preventDefault();
-          if (isShiftPressed.current) {
-            switchWindowDesktop(num);
-          } else {
-            switchDesktop(num);
-          }
-        }
-      }
-    };
-    const handleKeyUp = (e) => {
-      if (e.key === "z") {
-        isModPressed.current = false;
-        isShiftPressed.current = false;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, [openWindow, closeFocusedWindow, moveFocus]);
-  const prevDesktopRef = useRef(desktopState.activeDesktop);
-  const [slideDirection, setSlideDirection] = useState("right");
-  useEffect(() => {
-    const prev = prevDesktopRef.current;
-    const current = desktopState.activeDesktop;
-    if (prev !== current) {
-      setSlideDirection(current > prev ? "right" : "left");
-      prevDesktopRef.current = current;
-    }
-  }, [desktopState.activeDesktop]);
   return (
-    <div className="w-10/12 aspect-video z-10 p-2 border-4 rounded-xl border-gray-700 desktop-preview-container sticky top-0 bg-gray-900">
+    <div className="w-full h-full z-10 border-4 rounded-lg border-gray-700 desktop-preview-container sticky top-0 bg-gray-900">
+      <BootScreen onFinish={() => setBooted(true)} />
       <div
-        className="flex flex-col relative w-full h-full overflow-hidden group"
+        className="flex flex-col relative w-full h-full overflow-hidden group rounded-sm"
         style={{
           backgroundImage: `url(${config.wallpaper.url})`,
           backgroundSize: "cover",

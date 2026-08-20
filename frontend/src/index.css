@@ -1,10 +1,73 @@
 @import "tailwindcss";
+@font-face {
+  font-family: "Nerd Font Symbols";
+  src: url("/fonts/SymbolsNerdFontMono-Regular.ttf") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url('/fonts/Inter-Regular.woff2') format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url('/fonts/Inter-Medium.woff2') format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url('/fonts/JetBrainsMonoNerdFont-Regular.tff') format("tff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.nf {
+  font-family: "Nerd Font Symbols", "Inter", sans-serif;
+}
 
 body {
     background-color: #1e1e2e;
 }
 
-/* Animations */
+/* Boot Animations */
+.boot-screen {
+  opacity: 1;
+  transition: opacity 0.5s ease;
+  pointer-events: all;
+}
+
+.boot-screen--fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.boot-progress {
+  width: 200px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+.boot-progress-bar {
+  height: 100%;
+  width: 0%;
+  animation: boot-progress 5s ease forwards;
+}
+
+@keyframes boot-progress {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+/* Window animations */
 .window {
     transition:
         transform 180ms cubic-bezier(.22,1,.36,1),

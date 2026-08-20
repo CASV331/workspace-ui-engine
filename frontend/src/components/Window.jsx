@@ -4,7 +4,7 @@ import { useConfig } from "../contexts/ConfigContext";
 export function Window({ windowData, children }) {
   const { config, focusWindow, closeFocusedWindow, moveWindow, openWindow } =
     useConfig();
-  const { borderColor, borderColorUnfocused, borderWidth, borderRadius } =
+  const { borderColor, borderColorUnfocused, borderWidth, borderRadius, background } =
     config.window;
 
   const { id, position, size, isFocused } = windowData;
@@ -70,11 +70,12 @@ export function Window({ windowData, children }) {
   };
   return (
     <div
-      className={`flex absolute rounded-lg  overflow-auto window 
+      className={`flex absolute rounded-lg overflow-auto window backdrop-blur-xs
         ${isModPressed.current && "cursor-grab"}
         `}
       data-animation={windowData.animation.state}
       style={{
+        backgroundColor: background,
         left: position.x,
         top: position.y,
         width: size.width,
@@ -83,7 +84,7 @@ export function Window({ windowData, children }) {
         border: `${borderWidth}px solid ${isFocused ? borderColor : borderColorUnfocused}`,
         // borderRadius: `${borderRadius}px`
       }}
-      onMouseEnter={handleMouseDown}
+      onMouseMove={handleMouseDown}
     >
       {children}
     </div>

@@ -18,16 +18,23 @@ export function AudioVisualizer() {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const container = containerRef.current;
+    // const container = containerRef.current;
 
-    if(!canvas || !container) return;
+    if(!canvas) return;
+    const resizeCanvas = () => {
+      const rect = canvas.getBoundingClientRect()
+      if (rect.width > 0 && rect.height > 0) {
+        canvas.width = rect.width
+        canvas.height = rect.height
+      }
+    }
 
-      const resizeObserver = new ResizeObserver(() => {
-      canvas.width = container.clientWidth;
-      canvas.height = container.clientHeight;
-    });
+    resizeCanvas()
 
-    resizeObserver.observe(container);
+      const resizeObserver = new ResizeObserver(resizeCanvas)
+      resizeObserver.observe(canvas);
+
+    // resizeObserver.observe(container);
 
     return () => resizeObserver.disconnect();
   }, []);
@@ -46,9 +53,6 @@ export function AudioVisualizer() {
       const width = canvas.width;
       const height = canvas.height;
 
-      // Limpia el canvas
-      // ctx.fillStyle = bgColor
-      // ctx.fillRect(0, 0, width, height)
       ctx.clearRect(0, 0, width, height);
 
       if (!analyser) {
@@ -69,7 +73,7 @@ export function AudioVisualizer() {
       let x = 0;
 
       dataArray.forEach((value) => {
-        const barHeight = (value / 355) * height;
+        const barHeight = (value / 255) * height;
 
         // Gradiente de color según la altura
         const intensity = value / 255;
@@ -91,8 +95,8 @@ export function AudioVisualizer() {
 
   return (
     <div
-      className="flex flex-col h-full"
-      style={{ backgroundColor: background }}
+      className="flex flex-1 flex-col h-full"
+      style={{ backgroundColor: "transparent" }}
       ref={containerRef}
     >
       {/* Header estilo terminal
@@ -109,8 +113,6 @@ export function AudioVisualizer() {
       <canvas
         ref={canvasRef}
         className="flex-1 w-full h-full"
-        width={600}
-        height={300}
       />
     </div>
   );

@@ -41,13 +41,13 @@ export function ThemeDmenu({ isOpen, onClose }) {
   return (
     <div className="absolute inset-0 z-50 flex items-start justify-center pt-12">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="absolute inset-0" onClick={onClose} style={{background: background}} />
 
       {/* Panel flotante */}
       <div
         className="relative w-1/2 max-w-md rounded-lg overflow-hidden border"
         style={{
-          backgroundColor: bgColor,
+          backgroundColor: background,
           borderColor,
         }}
       >

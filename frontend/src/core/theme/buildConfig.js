@@ -20,7 +20,7 @@ export function buildConfigFromTokens(
       tertiary: tokens.tertiary,
       surface: tokens.surface,
       surfaceVarian: tokens.surfaceVarian,
-      background,
+      background: tokens.background,
       onSurface: tokens.onSurface,
       onBackground: tokens.onBackground,
       outline: tokens.outline,
