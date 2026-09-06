@@ -1,4 +1,4 @@
-const songsModules = import.meta.glob("/assets/music/*.mp3", {
+const songsModules = import.meta.glob("/src/assets/music/*.mp3", {
     eager: true,
     query: "?url",
     import: "default"
