@@ -53,6 +53,10 @@ export function useKeybinds({
           e.preventDefault()
           openWindow("fileManager")
         }
+        if (e.key === "i") {
+          e.preventDefault()
+          openWindow("networkManager")
+        }
 
         if (e.key === "ArrowRight") moveFocusRef.current("right");
         if (e.key === "ArrowLeft") moveFocusRef.current("left");

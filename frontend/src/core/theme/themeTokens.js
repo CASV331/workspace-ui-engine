@@ -1,8 +1,19 @@
 export const themes = {
-  catppuccin: {
-    name: "Catppuccin Mocha",
-    wallpaper: "/assets/wallpapers/catppuccin.png",
+  Blue: {
+    name: "Blue",
+    wallpaper: "/assets/wallpapers/Blue.png",
     tokens: {
+      bg0: "#141729",
+      bg1: "#1B1F34",
+      bg2: "#262A43",
+      bg3: "#45486A",
+
+      fg0: "#D6D3E8",
+      fg1: "#B8B4D0",
+      fg2: "#7E7A99",
+
+      accent: "#A48CD8",
+
       primary: "#89b4fa",
       secondary: "#cba6f7",
       surface: "#1e1e2e",
@@ -11,16 +22,10 @@ export const themes = {
       outline: "#585b70",
     },
   },
-  gruvbox: {
-    name: "Gruvbox Dark",
-    wallpaper: "/assets/wallpapers/gruvbox.png",
+  Ink: {
+    name: "Ink",
+    wallpaper: "/assets/wallpapers/Ink.png",
     tokens: {
-      primary: "#ebdbb2",
-      secondary: "#689d6a",
-      surface: "#928374",
-      background: "#282828",
-      onSurface: "#fbf1c7",
-      outline: "#504945",
       bg0: "#232A2E",
       bg1: "#2A3134",
       bg2: "#313739",
@@ -31,24 +36,53 @@ export const themes = {
       fg2: "#7A7B74",
 
       accent: "#D8CEB3",
+
+      primary: "#ebdbb2",
+      secondary: "#689d6a",
+      surface: "#928374",
+      background: "#282828",
+      onSurface: "#fbf1c7",
+      outline: "#504945",
     },
   },
-  nord: {
-    name: "Nord",
-    wallpaper: "/assets/wallpapers/nord.png",
+  Polnareff: {
+    name: "Polnareff",
+    wallpaper: "/assets/wallpapers/Polnareff.png",
     tokens: {
-      primary: "#88c0d0",
-      secondary: "#81a1c1",
-      surface: "#2e3440",
-      background: "#242933",
-      onSurface: "#eceff4",
-      outline: "#4c566a",
+      bg0: "#011138",
+      bg1: "#0A173D",
+      bg2: "#1D264B",
+      bg3: "#374063",
+      
+      fg0: "#E9ECF2",
+      fg1: "#A9B0C6",
+      fg2: "#6C7694",
+      
+      accent: "#D8E0F0",
+      
+      primary: "#7aa2f7",
+      secondary: "#bb9af7",
+      surface: "#1a1b26",
+      background: "#16161e",
+      onSurface: "#c0caf5",
+      outline: "#414868",
     },
   },
-  tokyonight: {
-    name: "Tokyo Night",
-    wallpaper: "/assets/wallpapers/polnareff.png",
+  Monochrome: {
+    name: "Monochrome",
+    wallpaper: "/assets/wallpapers/Monochrome.png",
     tokens: {
+      bg0: "#050505",
+      bg1: "#101010",
+      bg2: "#1C1C1C",
+      bg3: "#303030",
+
+      fg0: "#F2F2F2",
+      fg1: "#C8C8C8",
+      fg2: "#7A7A7A",
+
+      accent: "#E6E6E6",
+
       primary: "#7aa2f7",
       secondary: "#bb9af7",
       surface: "#1a1b26",
@@ -59,4 +93,4 @@ export const themes = {
   },
 };
 
-export const defaultTheme = themes.catppuccin;
+export const defaultTheme = themes.Blue;

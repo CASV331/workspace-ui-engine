@@ -1,18 +1,20 @@
 import { useState } from "react";
 import { useConfig } from "../../../../../../contexts/ConfigContext";
+import { usePlayer } from "../../../../../../contexts/PlayerContext";
 import { BarIcon } from "../shared/BarIcon";
-import { SoundPanel } from "./SoundPanel";
+import { SoundPanel } from "./panels/SoundPanel";
 
 export function Volume() {
   const { config } = useConfig();
   const { bg0, bg1, bg2, bg3, fg0, fg1, fg2, accent } = config.colors;
-
+  const { playerState, setVolume } = usePlayer()
+  const { volume } = playerState
   const [showPanel, setShowPanel] = useState(false);
   
   return (
     <>
     <div
-      className="flex items-center gap-1 rounded-lg"
+      className="flex items-center gap-1 rounded-lg cursor-pointer"
       style={{
         backgroundColor: bg3,
         padding: "4px 14px",
@@ -39,7 +41,7 @@ export function Volume() {
           </g>
         </svg>
       </BarIcon>
-      100%
+      {`${Math.round(volume * 100)}%`}
     </div>
     {showPanel && (
             <div

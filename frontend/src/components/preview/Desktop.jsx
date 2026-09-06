@@ -14,6 +14,7 @@ import { HelpWindow } from "../../features/help/HelpWindow";
 import { Welcome } from "../../features/welcome/Welcome";
 import { useKeybinds } from "../../core/keybinds/keybinds";
 import { FileManager} from "../../features/File_manager/FileManager";
+import { NetworkManager } from "../../features/networkManager/NetworkManager";
 
 const APPS = {
   terminal: Terminal,
@@ -21,7 +22,8 @@ const APPS = {
   cava: AudioVisualizer,
   help: HelpWindow,
   welcome: Welcome,
-  fileManager: FileManager
+  fileManager: FileManager,
+  networkManager: NetworkManager
 };
 function Preview() {
   const {

@@ -106,7 +106,7 @@ export function MusicPlayer() {
       </div>
 
       {/* Volumen */}
-      <div className="flex items-center gap-2">
+      {/* <div className="flex items-center gap-2">
         <span style={{ color: outline }}>vol</span>
         <input
           type="range"
@@ -119,7 +119,7 @@ export function MusicPlayer() {
           style={{ accentColor: primary }}
         />
         <span style={{ color: outline }}>{Math.round(volume * 100)}%</span>
-      </div>
+      </div> */}
 
       {/* Lista */}
       <div

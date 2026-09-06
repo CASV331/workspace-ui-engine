@@ -33,6 +33,7 @@ export function PlayerProvider({ children }) {
     currentTime: 0,
     duration: 0,
   })
+  const [ hasPlayed, setHasPlayed ] = useState(false)
 
   const currentSong = BUILTIN_SONGS[playerState.currentIndex]
 
@@ -92,8 +93,10 @@ export function PlayerProvider({ children }) {
     setPlayerState(p => ({ ...p, isPlaying: false }))
   }
 
-  const togglePlay = () => playerState.isPlaying ? pause() : play()
-
+  const togglePlay = () => {
+    playerState.isPlaying ? pause() : play()
+    setHasPlayed(true)
+  }
   const next = () => {
     // shouldPlayRef mantiene si debe reproducir al cargar la siguiente
     shouldPlayRef.current = playerState.isPlaying
@@ -137,6 +140,7 @@ export function PlayerProvider({ children }) {
       seek,
       setVolume,
       selectSong,
+      hasPlayed
     }}>
       {children}
     </PlayerContext.Provider>
