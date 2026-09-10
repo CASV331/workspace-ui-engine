@@ -65,7 +65,6 @@ export function ConfigProvider({ children }) {
     playOpenAnimation(id, dispatch);
   };
   const closeFocusedWindow = (id) => {
-        console.log(id)
       playCloseAnimation(id, dispatch)
   };
 
