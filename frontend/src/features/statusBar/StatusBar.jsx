@@ -1,7 +1,7 @@
 import { useConfig } from "../../contexts/ConfigContext";
 import { Volume } from "./modules/right/Volume";
 import { Network } from "./modules/right/Network";
-import { Battery } from "./modules/right/ Battery";
+import { Battery } from "./modules/right/Battery";
 import { Power } from "./modules/right/power";
 import { Clock } from "./modules/center/Clock";
 import { Workspaces } from "./modules/left/Workspaces";

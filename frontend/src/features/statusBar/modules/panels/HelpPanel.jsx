@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useConfig } from "../../../../../contexts/ConfigContext";
+import { useConfig } from "../../../../contexts/ConfigContext";
 
 const KEYBINDS = [
   {
@@ -88,11 +88,12 @@ export function HelpPanel({ onClose }) {
         x: e.clientX - dragRef.current.offsetX,
         y: e.clientY - dragRef.current.offsetY,
       });
+  console.log(position)
     };
 
     const handleMouseUp = () => {
       dragRef.current.dragging = false;
-      document.body.style.useSelect = "";
+      document.body.style.userSelect = "";
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -108,6 +109,7 @@ export function HelpPanel({ onClose }) {
   return (
     <div
       ref={panelRef}
+      onClick={(e) => e.stopPropagation()}
       className="fixed z-100 w-85 overflow-hidden rounded-lg"
       style={{
         left: position.x,
@@ -138,8 +140,9 @@ export function HelpPanel({ onClose }) {
         </span>
 
         <button
+          onMouseDown={(e) => e.stopPropagation()}
           onClick={onClose}
-          className="px-2"
+          className="px-2 cursor-pointer"
           style={{
             color: fg1,
           }}

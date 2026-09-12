@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { useConfig } from "../../../../../contexts/ConfigContext";
-import { useNetwork } from "../../../../../contexts/NetworkContext";
+import { useConfig } from "../../../../contexts/ConfigContext";
+import { useNetwork } from "../../../../contexts/NetworkContext";
 
 export function NetworkPanel({ state, change, isOpen, onClose }) {
   const { config, openWindow } = useConfig();
@@ -63,7 +63,7 @@ export function NetworkPanel({ state, change, isOpen, onClose }) {
               className="absolute top-0.5 h-5 w-5 rounded-full transition-transform"
               style={{
                 backgroundColor: fg0,
-                transform: wifiEnabled ? "translarteX(22px)" : "translateX(2px)",
+                transform: wifiEnabled ? "translateX(22px)" : "translateX(2px)",
               }}
             />
           </div>
@@ -95,14 +95,14 @@ export function NetworkPanel({ state, change, isOpen, onClose }) {
 
       <button
         type="button"
-        className="w-full rounded-md px-3 py-2 text-sm font-medium transition-opacity"
+        className="w-full rounded-md px-3 py-2 text-sm font-medium cursor-pointer"
         style={{
           backgroundColor: accent,
           color: bg1,
         }}
         onClick={() => openWindow("networkManager")}
       >
-        More options
+        More
       </button>
     </div>
   );

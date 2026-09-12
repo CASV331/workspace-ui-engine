@@ -12,7 +12,7 @@ import { playCloseAnimation } from "../core/animation/animationEngine";
 import BootScreen from "../core/boot/BootScreen";
 import { HelpWindow } from "../features/help/HelpWindow";
 import { Welcome } from "../features/welcome/Welcome";
-import { useKeybinds } from "../core/keybinds/globalKeybinds";
+import { useKeybinds } from "../core/keybinds/DesktopKeybinds";
 import { FileManager} from "../features/File_manager/FileManager";
 import { NetworkManager } from "../features/networkManager/NetworkManager";
 
@@ -163,7 +163,7 @@ function Desktop() {
 
 
   return (
-    <div className="w-full h-full z-10 border-4 rounded-lg border-gray-700 desktop-preview-container sticky top-0 bg-gray-900">
+    <div className="w-full h-full z-10 desktop-preview-container sticky top-0 bg-gray-900">
       <BootScreen onFinish={() => setBooted(true)} />
       <div
         className="flex flex-col relative w-full h-full overflow-hidden group rounded-sm"

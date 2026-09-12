@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { createPortal } from "react-dom"
 import { useConfig } from "../../../../contexts/ConfigContext";
 import { BarIcon } from "../../shared/BarIcon";
-import { HelpPanel } from "../right/panels/HelpPanel";
+import { HelpPanel } from "../panels/HelpPanel";
 export function Help() {
   const { config } = useConfig();
   const { bg0, bg1, bg3, fg0, fg2 } = config.colors;
@@ -15,30 +16,31 @@ export function Help() {
         backgroundColor: bg3,
         padding: "4px 4px"
     }}
-      onMouseEnter={() => setShowTooltip(true)}
-      onMouseLeave={() => setShowTooltip(false)}
-      onClick={() => setShowHelp(!showHelp)}
+      onClick={() => setShowHelp((prev) => !prev)}
     >
+    <div
+          onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)} >
       <BarIcon>
         <svg
           viewBox="0 0 25.00 25.00"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+          <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
           <g
             id="SVGRepo_tracerCarrier"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             stroke="#CCCCCC"
-            stroke-width="0.05"
+            strokeWidth="0.05"
           ></g>
           <g id="SVGRepo_iconCarrier">
             {" "}
             <path
               d="M12 21.5C17.1086 21.5 21.25 17.3586 21.25 12.25C21.25 7.14137 17.1086 3 12 3C6.89137 3 2.75 7.14137 2.75 12.25C2.75 17.3586 6.89137 21.5 12 21.5Z"
               stroke={`${fg0}`}
-              strokeWidth="0.775"
+              strokeWidth="1.775"
               strokeLinecap="round"
               strokeLinejoin="round"
             ></path>{" "}
@@ -49,6 +51,7 @@ export function Help() {
           </g>
         </svg>
       </BarIcon>
+      </div>
       {showTooltip && (
         <div
           className="absolute top-full mt-2 px-3 py-2 rounded-md text-sm z-20"
@@ -59,11 +62,13 @@ export function Help() {
             whiteSpace: "nowrap",
           }}
         >
-          Show help
+          Show info
         </div>
       )}
-      {showHelp && (
-          <HelpPanel />
+      {showHelp && 
+      createPortal(    
+          <HelpPanel onClose={() => setShowHelp(false)} />,
+          document.body
       )}
     </div>
   );

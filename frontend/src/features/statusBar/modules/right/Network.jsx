@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useConfig } from "../../../../contexts/ConfigContext";
 import { BarIcon } from "../../shared/BarIcon";
-import { NetworkPanel } from "./panels/NetworkPanel";
+import { NetworkPanel } from "../panels/NetworkPanel";
 
 export function Network() {
   const { config } = useConfig();

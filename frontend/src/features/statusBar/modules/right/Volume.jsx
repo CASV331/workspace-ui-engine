@@ -2,7 +2,7 @@ import { useState } from "react";
 import { usePlayer } from "../../../../contexts/PlayerContext";
 import { useConfig } from "../../../../contexts/ConfigContext";
 import { BarIcon } from "../../shared/BarIcon";
-import { SoundPanel } from "./panels/SoundPanel";
+import { SoundPanel } from "../panels/SoundPanel";
 
 export function Volume() {
   const { config } = useConfig();

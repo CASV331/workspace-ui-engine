@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
-import { useConfig } from "../../../../../contexts/ConfigContext";
-import { usePlayer } from "../../../../../contexts/PlayerContext";
+import { useConfig } from "../../../../contexts/ConfigContext";
+import { usePlayer } from "../../../../contexts/PlayerContext";
 
 export function SoundPanel() {
   const { config } = useConfig();
@@ -66,13 +66,13 @@ export function SoundPanel() {
       </div>
             <button
         type="button"
-        className="w-full rounded-md px-3 py-1 text-sm font-medium transition-opacity"
+        className="w-full mt-4 rounded-md px-3 py-1 text-sm font-medium cursor-pointer"
         style={{
           backgroundColor: accent,
           color: bg1
         }}
         onClick={() => openWindow("networkManager")}>
-          More options
+          More
         </button>
     </div>
   );
