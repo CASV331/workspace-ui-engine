@@ -10,20 +10,19 @@ import { MusicPlayer } from "../features/music_player/Music_player";
 import { AudioVisualizer } from "../features/audio_visualizer/AudioVisualizer";
 import { playCloseAnimation } from "../core/animation/animationEngine";
 import BootScreen from "../core/boot/BootScreen";
-import { HelpWindow } from "../features/help/HelpWindow";
 import { Welcome } from "../features/welcome/Welcome";
 import { useKeybinds } from "../core/keybinds/DesktopKeybinds";
-import { FileManager} from "../features/File_manager/FileManager";
+import { FileManager } from "../features/File_manager/FileManager";
 import { NetworkManager } from "../features/networkManager/NetworkManager";
+import { LockScreen } from "../features/lockScreen/LockScreen";
 
 const APPS = {
   terminal: Terminal,
   rmpc: MusicPlayer,
   cava: AudioVisualizer,
-  help: HelpWindow,
   welcome: Welcome,
   fileManager: FileManager,
-  networkManager: NetworkManager
+  networkManager: NetworkManager,
 };
 function Desktop() {
   const {
@@ -41,6 +40,7 @@ function Desktop() {
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [slideDirection, setSlideDirection] = useState("right");
   const [booted, setBooted] = useState(false);
+  const [unlocked, setUnlocked] = useState(false);
   // Ref
   const prevDesktopRef = useRef(desktopState.activeDesktop);
   const containerRef = useRef(null);
@@ -50,32 +50,42 @@ function Desktop() {
   const focused = currentWindows.find((win) => win.isFocused === true);
 
   // Calculate layout
+  // useEffect(() => {
+  //   if (!containerRef.current) return;
+  //   const { width, height } = containerRef.current.getBoundingClientRect();
+  //   setContainerSize({ width, height });
+  // }, []);
+
   useEffect(() => {
-    if (!containerRef.current) return;
-    const { width, height } = containerRef.current.getBoundingClientRect();
-    setContainerSize({ width, height });
+    const el = containerRef.current;
+    if (!el) return;
+
+    const updateSize = () => {
+      const rect = el.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        setContainerSize((prev) => {
+          if (prev.width === rect.width && prev.height === rect.height)
+            return prev;
+
+          return { width: rect.width, height: rect.height };
+        });
+      }
+    };
+
+    // Medición inicial inmediata
+    updateSize();
+
+    // Observar cambios de tamaño
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(el);
+
+    window.addEventListener("resize", updateSize);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateSize);
+    };
   }, []);
-  
-  useEffect(() => {
-  const el = containerRef.current;
-  if (!el) return;
-
-  const updateSize = () => {
-    const rect = el.getBoundingClientRect();
-    if (rect.width > 0 && rect.height > 0) {
-      setContainerSize({ width: rect.width, height: rect.height });
-    }
-  };
-
-  // Medición inicial inmediata
-  updateSize();
-
-  // Observar cambios de tamaño
-  const observer = new ResizeObserver(updateSize);
-  observer.observe(el);
-
-  return () => observer.disconnect();
-}, []);
 
   const layout = useMemo(() => {
     if (currentWindows.length === 0) return {};
@@ -85,10 +95,20 @@ function Desktop() {
 
     const tree = buildTree(currentWindows);
 
-    return calculateLayout(tree, 0, 0, containerSize.width, containerSize.height);
-  }, [currentWindows, containerSize]);
+    const gapsIn = config.window.gap ?? 0;
 
-    useEffect(() => {
+    return calculateLayout(
+      tree,
+      0,
+      0,
+      containerSize.width,
+      containerSize.height,
+      0,
+      gapsIn,
+    );
+  }, [currentWindows, containerSize, config.window.gap]);
+
+  useEffect(() => {
     const prev = prevDesktopRef.current;
     const current = desktopState.activeDesktop;
     if (prev !== current) {
@@ -96,7 +116,6 @@ function Desktop() {
       prevDesktopRef.current = current;
     }
   }, [desktopState.activeDesktop]);
-
 
   const moveFocus = (direction) => {
     if (!focused) return;
@@ -159,55 +178,56 @@ function Desktop() {
     switchWindowDesktop,
     setDmenuOpen,
     focused,
+    enabled: booted && unlocked
   });
-
-
+  console.log(unlocked, booted)
   return (
     <div className="w-full h-full z-10 desktop-preview-container sticky top-0 bg-gray-900">
-      <BootScreen onFinish={() => setBooted(true)} />
-      <div
-        className="flex flex-col relative w-full h-full overflow-hidden group rounded-sm"
-        style={{
-          backgroundImage: `url(${config.wallpaper.url})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <StatusBar />
+      {!booted && <BootScreen onFinish={() => setBooted(true)} />}
+        {!unlocked && booted && <LockScreen onUnlock={() => setUnlocked(true)} />}
         <div
-          key={desktopState.activeDesktop} // fuerza remount al cambiar de escritorio
-          className={`workspace-slide-${slideDirection} relative flex flex-1 w-full p-2`}
+          className="flex flex-col relative w-full h-full overflow-hidden group rounded-sm"
+          style={{
+            backgroundImage: `url(${config.wallpaper.url})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
         >
+          <StatusBar />
           <div
-            ref={containerRef}
-            className="relative flex-1 w-full justify-between"
+            // key={desktopState.activeDesktop} // fuerza remount al cambiar de escritorio
+            className={`workspace-slide-${slideDirection} relative flex flex-1 w-full p-2`}
           >
-            {currentWindows.map((win) => {
-              const App = APPS[win.type];
-              return (
-                <Window
-                  key={win.id}
-                  windowData={{
-                    ...win,
-                    position: {
-                      x: layout[win.id]?.x ?? 0,
-                      y: layout[win.id]?.y ?? 0,
-                    },
-                    size: {
-                      width: layout[win.id]?.width ?? 300,
-                      height: layout[win.id]?.height ?? 200,
-                    },
-                  }}
-                >
-                  {App && <App />}
-                </Window>
-              );
-            })}
+            <div
+              ref={containerRef}
+              className="relative flex-1 w-full justify-between"
+            >
+              {currentWindows.map((win) => {
+                const App = APPS[win.type];
+                return (
+                  <Window
+                    key={win.id}
+                    windowData={{
+                      ...win,
+                      position: {
+                        x: layout[win.id]?.x ?? 0,
+                        y: layout[win.id]?.y ?? 0,
+                      },
+                      size: {
+                        width: layout[win.id]?.width ?? 300,
+                        height: layout[win.id]?.height ?? 200,
+                      },
+                    }}
+                  >
+                    {App && <App />}
+                  </Window>
+                );
+              })}
+            </div>
           </div>
+          <ThemeDmenu isOpen={dmenuOpen} onClose={() => setDmenuOpen(false)} />
         </div>
-        <ThemeDmenu isOpen={dmenuOpen} onClose={() => setDmenuOpen(false)} />
-      </div>
     </div>
   );
 }

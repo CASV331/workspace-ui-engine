@@ -29,7 +29,7 @@ export function PlayerProvider({ children }) {
   const [playerState, setPlayerState] = useState({
     currentIndex: 0,
     isPlaying: false,
-    volume: 1,
+    volume: 0.5,
     currentTime: 0,
     duration: 0,
   })

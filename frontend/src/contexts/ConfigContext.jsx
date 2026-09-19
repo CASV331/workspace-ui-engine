@@ -18,12 +18,6 @@ const defaultDesktopState = {
     1: { windows: [] },
     2: { windows: [] },
     3: { windows: [] },
-    4: { windows: [] },
-    5: { windows: [] },
-    6: { windows: [] },
-    7: { windows: [] },
-    8: { windows: [] },
-    9: { windows: [] },
   },
 };
 

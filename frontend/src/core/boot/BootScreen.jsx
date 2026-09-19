@@ -18,7 +18,7 @@ export default function BootScreen({ onFinish }) {
 
   return (
     <div
-      className={`boot-screen ${fadeOut ? "boot-screen--fade-out" : ""} absolute inset-0 z-10 flex items-center justify-center cursor-none`}
+      className={`absolute inset-0 z-10 flex items-center justify-center cursor-none`}
       style={{
         backgroundColor: "#000000"
       }}

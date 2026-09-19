@@ -7,6 +7,7 @@ export function useKeybinds({
   switchWindowDesktop,
   setDmenuOpen,
   focused,
+  enabled = true
 }) {
   const isModPressed = useRef(false);
   const isShiftPressed = useRef(false);
@@ -17,6 +18,7 @@ export function useKeybinds({
   }, [moveFocus]);
 
   useEffect(() => {
+    if (!enabled) return
     const handleKeyDown = (e) => {
       if (e.key === "p") {
         isShiftPressed.current = true;
@@ -64,7 +66,7 @@ export function useKeybinds({
         if (e.key === "ArrowDown") moveFocusRef.current("down");
 
         const num = parseInt(e.key);
-        if (num >= 1 && num <= 9) {
+        if (num >= 1 && num <= 3) {
           e.preventDefault();
           if (isShiftPressed.current) {
             switchWindowDesktop(num);
@@ -86,5 +88,5 @@ export function useKeybinds({
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [openWindow, switchDesktop, switchWindowDesktop, setDmenuOpen, closeFocusedWindow, focused]);
+  }, [enabled, openWindow, switchDesktop, switchWindowDesktop, setDmenuOpen, closeFocusedWindow, focused]);
 }

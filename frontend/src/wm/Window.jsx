@@ -15,6 +15,8 @@ export function Window({ windowData, children }) {
   // Listen to mod button
   const isModPressed = useRef(false);
 
+  console.log()
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "z") {

@@ -4,8 +4,8 @@ function insertWindow(node, newLeaf) {
     if (node.type === "leaf") {
         return {
             type: "split",
-            left: node, // Set the current leaf as left
-            right: newLeaf // The new window is set to right
+            left: node,
+            right: newLeaf
         }
     }
 
@@ -29,7 +29,7 @@ export function buildTree(windows) {
 
 }
 
-export function calculateLayout(node, x, y, width, height, depth = 0) {
+export function calculateLayout(node, x, y, width, height, depth = 0, gap = 0) {
     // If there is one leaf, it'll take the whole space
     if (node.type === "leaf") {
         return {
@@ -39,19 +39,19 @@ export function calculateLayout(node, x, y, width, height, depth = 0) {
 
     // Defines the direction in base the depth
     const isHorizontal = depth % 2 === 0
+    const halfWidth = isHorizontal ? (width - gap) / 2 : width
+    const halfHeight = isHorizontal ? height : (height - gap) / 2
 
     // Calculates the space for each child
-    const leftSpace = isHorizontal
-        ? { x, y, width: width / 2, height } // Divide the width
-        : { x, y, width, height: height / 2 } // Divide the height
+    const leftSpace = { x, y, width: halfWidth, height: halfHeight } // Divide the height
 
     // Calculates the space for each right child
     const rightSpace = isHorizontal
-        ? { x: x + width / 2, y, width: width / 2, height }
-        : { x, y: y + height / 2, width, height: height / 2 }
+        ? { x: x + halfWidth + gap, y, width: halfWidth, height: halfHeight }
+        : { x, y: y + halfHeight + gap, width: halfWidth, height: halfHeight }
 
     return {
-        ...calculateLayout(node.left, leftSpace.x, leftSpace.y, leftSpace.width, leftSpace.height, depth + 1),
-        ...calculateLayout(node.right, rightSpace.x, rightSpace.y, rightSpace.width, rightSpace.height, depth + 1)
+        ...calculateLayout(node.left, leftSpace.x, leftSpace.y, leftSpace.width, leftSpace.height, depth + 1, gap),
+        ...calculateLayout(node.right, rightSpace.x, rightSpace.y, rightSpace.width, rightSpace.height, depth + 1, gap)
     }
 }

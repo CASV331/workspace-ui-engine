@@ -151,7 +151,7 @@ export function HelpPanel({ onClose }) {
         </button>
       </div>
 
-      <div className="max-h-125 overflow-y-auto p-3">
+      <div className="max-h-96 overflow-y-auto p-3">
         <div className="flex flex-col gap-2">
           {KEYBINDS.map((bind) => (
             <div

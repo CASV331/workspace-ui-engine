@@ -8,7 +8,7 @@ export function Workspaces() {
 
   return (
     <div className="flex">
-      {[1, 2, 3, 4, 5, 6, 7, 8, 9]
+      {[1, 2, 3]
         .filter(
           (desktop) =>
             desktops[desktop].windows.length > 0 || desktop === activeDesktop,

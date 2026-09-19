@@ -64,7 +64,7 @@ export function SoundPanel() {
       </div>
       
       </div>
-            <button
+            {/* <button
         type="button"
         className="w-full mt-4 rounded-md px-3 py-1 text-sm font-medium cursor-pointer"
         style={{
@@ -73,7 +73,7 @@ export function SoundPanel() {
         }}
         onClick={() => openWindow("networkManager")}>
           More
-        </button>
+        </button> */}
     </div>
   );
 }

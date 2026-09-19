@@ -7,7 +7,7 @@ import { useConfig } from "../../contexts/ConfigContext";
 export function AudioVisualizer() {
   const { analyserRef, playerState, currentSong } = usePlayer();
   const { config } = useConfig();
-  const { primary, surface, outline } = config.colors;
+  const { fg0, bg0, fg1 } = config.colors;
   const { background, backgroundOpacity } = config.window;
 
 
@@ -57,7 +57,7 @@ export function AudioVisualizer() {
 
       if (!analyser) {
         // Sin analyser dibuja línea plana
-        ctx.strokeStyle = outline;
+        ctx.strokeStyle = fg1;
         ctx.beginPath();
         ctx.moveTo(0, height / 2);
         ctx.lineTo(width, height / 2);
@@ -77,7 +77,7 @@ export function AudioVisualizer() {
 
         // Gradiente de color según la altura
         const intensity = value / 255;
-        ctx.fillStyle = interpolateColor(outline, primary, intensity);
+        ctx.fillStyle = interpolateColor(fg1, fg0, intensity);
 
         ctx.fillRect(x, height - barHeight, barWidth - 1, barHeight);
         x += barWidth;
@@ -91,7 +91,7 @@ export function AudioVisualizer() {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [analyserRef.current, primary, surface, outline, background]);
+  }, [analyserRef.current, fg0, bg0, fg1, background]);
 
   return (
     <div
@@ -102,10 +102,10 @@ export function AudioVisualizer() {
       {/* Header estilo terminal
       <div
         className="flex justify-between items-center px-3 py-1 font-mono text-xs border-b"
-        style={{ color: outline, borderColor: outline }}
+        style={{ color: fg1, borderColor: fg1 }}
       >
         <span>cava</span>
-        <span style={{ color: primary }}>{currentSong?.name ?? "no track"}</span>
+        <span style={{ color: fg0 }}>{currentSong?.name ?? "no track"}</span>
         <span>{playerState.isPlaying ? "▶ playing" : "⏸ paused"}</span>
       </div> */}
 

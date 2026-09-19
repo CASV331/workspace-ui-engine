@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { useConfig } from "../../../../contexts/ConfigContext";
 import { BarIcon } from "../../shared/BarIcon";
 import { NetworkPanel } from "../panels/NetworkPanel";
+import { useNetwork } from "../../../../contexts/NetworkContext";
 
 export function Network() {
   const { config } = useConfig();
   const { bg0, bg1, bg2, bg3, fg0, fg1, fg2, accent } = config.colors;
-
+  const { networkState } = useNetwork()
   const [showPanel, setShowPanel] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [net, setNet] = useState(true);
@@ -72,7 +73,7 @@ export function Network() {
             </svg>
           )}
         </BarIcon>
-        <p>{net ? "100%" : "Off"}</p>
+        <p>{networkState ? "100%" : "Off"}</p>
         {showTooltip && (
           <div
             className=" items-center absolute top-full mt-2 px-3 py-2 rounded-md text-sm z-20"
