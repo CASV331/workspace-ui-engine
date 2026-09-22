@@ -39,7 +39,6 @@ export function LockScreen({ onUnlock }) {
   };
 
   const handleTransitionEnd = () => {
-    console.log("trAnsition end");
     if (isUnlocking) onUnlock();
   };
 
@@ -76,7 +75,7 @@ export function LockScreen({ onUnlock }) {
         </div>
         <div className="w-full h-full flex flex-col items-center">
           <input
-            className="w-1/7 p-2 rounded-full outline-none"
+            className="w-2/8 lg:w-2/8 p-2 rounded-full outline-none"
             style={{
               backgroundColor: bg0,
               color: fg0,
@@ -86,7 +85,7 @@ export function LockScreen({ onUnlock }) {
             type="password"
           />
           <button
-            className="w-1/8 rounded-xl mt-8 p-1 hover:opacity-80"
+            className="w-2/9 lg:w-2/9 rounded-xl mt-8 p-1 hover:opacity-80"
             style={{
               backgroundColor: fg0,
               color: bg1,

@@ -5,10 +5,12 @@ import { PlayerProvider } from "./contexts/PlayerContext.jsx";
 import { NetworkProvider } from "./contexts/NetworkContext.jsx";
 import BootScreen from "./core/boot/BootScreen";
 import "./index.css";
+import { DesktopProvider } from "./contexts/DesktopContext.jsx";
 
 function App() {
   return (
     <ConfigProvider>
+      <DesktopProvider>
       <PlayerProvider>
         <NetworkProvider>
         {/* flex items-center justify-center gap-4 lg:gap-6 */}
@@ -17,6 +19,7 @@ function App() {
         </div>
         </NetworkProvider>
       </PlayerProvider>
+      </DesktopProvider>
     </ConfigProvider>
   );
 }

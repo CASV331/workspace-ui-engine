@@ -7,16 +7,16 @@ const KEYBINDS = [
     description: "Open terminal",
   },
   {
+    key: "Z + Backspace",
+    description: "Close window",
+  },
+  {
     key: "Z + M",
     description: "Music Player",
   },
   {
     key: "Z + A",
     description: "Cava",
-  },
-  {
-    key: "Z + Backspace",
-    description: "Close window",
   },
   {
     key: "Z + D",
@@ -88,7 +88,7 @@ export function HelpPanel({ onClose }) {
         x: e.clientX - dragRef.current.offsetX,
         y: e.clientY - dragRef.current.offsetY,
       });
-  console.log(position)
+      console.log(position);
     };
 
     const handleMouseUp = () => {

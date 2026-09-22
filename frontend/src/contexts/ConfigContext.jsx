@@ -1,25 +1,9 @@
 import { useReducer } from "react";
 import { createContext, useContext, useState } from "react";
-import { desktopReducer } from "./reducers/desktopReducer.js";
-import { APP_REGISTRY } from "../core/apps/registry.js";
 // Themes imports
 import { buildConfigFromTokens } from "../core/theme/buildConfig.js";
 import { defaultTheme, themes } from "../core/theme/themeTokens.js";
 import { loadSavedTheme, saveTheme } from "../core/theme/themeStorage.js";
-import {
-  playCloseAnimation,
-  playOpenAnimation,
-  
-} from "../core/animation/animationEngine.js";
-
-const defaultDesktopState = {
-  activeDesktop: 1,
-  desktops: {
-    1: { windows: [] },
-    2: { windows: [] },
-    3: { windows: [] },
-  },
-};
 
 const ConfigContext = createContext(null);
 
@@ -31,10 +15,6 @@ function getInitialConfig() {
 
 export function ConfigProvider({ children }) {
   const [config, setConfig] = useState(getInitialConfig);
-  const [desktopState, dispatch] = useReducer(
-    desktopReducer,
-    defaultDesktopState,
-  );
 
   const updateConfig = (section, key, value) => {
     setConfig((prev) => ({
@@ -45,48 +25,6 @@ export function ConfigProvider({ children }) {
       },
     }));
   };
-
-  const openWindow = (type) => {
-    const app = APP_REGISTRY[type];
-    const id = `win_${Date.now()}`;
-    dispatch({
-      type: "WINDOW_OPEN",
-      payload: {
-        id,
-        type,
-      },
-    });
-    playOpenAnimation(id, dispatch);
-  };
-  const closeFocusedWindow = (id) => {
-      playCloseAnimation(id, dispatch)
-  };
-
-  const focusWindow = (windowId) =>
-    dispatch({
-      type: "WINDOW_FOCUS",
-      payload: { windowId },
-    });
-
-  const moveWindow = (windowId, position) =>
-    dispatch({
-      type: "MOVE_WINDOW",
-      payload: { windowId, position },
-    });
-
-  const switchWindowDesktop = (desktopNumber) =>
-    dispatch({
-      type: "WINDOW_SWITCH_DESKTOP",
-      payload: { desktopNumber },
-    });
-
-  const switchDesktop = (desktopNumber) => {
-    dispatch({
-      type: "DESKTOP_SWITCH",
-      payload: { desktopNumber },
-    });
-    // playWorkspaceSwitchAnimation(desktopNumber, dispatch)
-}
 
   const setTheme = (themeName) => {
     const theme = themes[themeName];
@@ -99,19 +37,8 @@ export function ConfigProvider({ children }) {
   return (
     <ConfigContext.Provider
       value={{
-        // Appearance config
         config,
         updateConfig,
-        // defaultConfig,
-        // Desktop state
-        desktopState,
-        // Desktop actions
-        openWindow,
-        closeFocusedWindow,
-        focusWindow,
-        switchDesktop,
-        moveWindow,
-        switchWindowDesktop,
         setTheme,
       }}
     >

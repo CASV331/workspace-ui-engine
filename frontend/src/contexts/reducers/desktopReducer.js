@@ -1,5 +1,11 @@
 export function desktopReducer(state, action) {
   switch (action.type) {
+    case "LOCKSCREEN": {
+      return {
+        ...state,
+        unlocked: action.payload.unlocked
+      }
+    }
     case "WINDOW_OPEN": {
       const newWindow = {
         id: action.payload.id,
@@ -173,7 +179,6 @@ export function desktopReducer(state, action) {
           },
         },
       };
-
     default:
       return state;
   }

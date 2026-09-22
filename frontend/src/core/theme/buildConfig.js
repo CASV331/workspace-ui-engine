@@ -10,7 +10,7 @@ export function buildConfigFromTokens(
     const b = parseInt(hex.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
   };
-  const bg0 = hexToRgba(tokens.bg0, 0.8);
+  const bg0 = hexToRgba(tokens.bg0, 0.9);
 
   return {
     colors: {

@@ -7,7 +7,7 @@ import { useConfig } from "../../contexts/ConfigContext";
 export function AudioVisualizer() {
   const { analyserRef, playerState, currentSong } = usePlayer();
   const { config } = useConfig();
-  const { fg0, bg0, fg1 } = config.colors;
+  const { fg0, bg0, fg1, fg2 } = config.colors;
   const { background, backgroundOpacity } = config.window;
 
 

@@ -1,4 +1,5 @@
 import { useConfig } from "../contexts/ConfigContext";
+import { useDesktop} from "../contexts/DesktopContext"
 import { Window } from "./Window";
 import { Terminal } from "../features/terminal/Terminal";
 import { StatusBar } from "../features/statusBar/StatusBar";
@@ -25,22 +26,26 @@ const APPS = {
   networkManager: NetworkManager,
 };
 function Desktop() {
+  const { config } = useConfig();
   const {
-    config,
     desktopState,
     openWindow,
     closeFocusedWindow,
     focusWindow,
     switchDesktop,
     switchWindowDesktop,
-  } = useConfig();
+    lockScreen,
+    unlockScreen
+  } = useDesktop()
+  
+  const unlocked = desktopState.unlocked
 
   // State
   const [dmenuOpen, setDmenuOpen] = useState(false);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [slideDirection, setSlideDirection] = useState("right");
   const [booted, setBooted] = useState(false);
-  const [unlocked, setUnlocked] = useState(false);
+
   // Ref
   const prevDesktopRef = useRef(desktopState.activeDesktop);
   const containerRef = useRef(null);
@@ -178,13 +183,14 @@ function Desktop() {
     switchWindowDesktop,
     setDmenuOpen,
     focused,
+    lockScreen,
     enabled: booted && unlocked
   });
-  console.log(unlocked, booted)
+
   return (
     <div className="w-full h-full z-10 desktop-preview-container sticky top-0 bg-gray-900">
       {!booted && <BootScreen onFinish={() => setBooted(true)} />}
-        {!unlocked && booted && <LockScreen onUnlock={() => setUnlocked(true)} />}
+        {!unlocked && booted && <LockScreen onUnlock={unlockScreen} />}
         <div
           className="flex flex-col relative w-full h-full overflow-hidden group rounded-sm"
           style={{

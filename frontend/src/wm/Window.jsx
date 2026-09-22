@@ -1,11 +1,11 @@
 import { useRef, useState, useEffect } from "react";
 import { useConfig } from "../contexts/ConfigContext";
+import { useDesktop } from "../contexts/DesktopContext"
 
 export function Window({ windowData, children }) {
-  const { config, focusWindow, closeFocusedWindow, moveWindow, openWindow } =
-    useConfig();
-  const { borderColor, borderColorUnfocused, borderWidth, borderRadius, background } =
-    config.window;
+  const { config } = useConfig();
+  const { focusWindow, moveWindow } = useDesktop()
+  const { accent, bg0, fg2 } = config.colors;
 
   const { id, position, size, isFocused } = windowData;
   const [pos, setPos] = useState(position);
@@ -14,8 +14,6 @@ export function Window({ windowData, children }) {
 
   // Listen to mod button
   const isModPressed = useRef(false);
-
-  console.log()
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -77,13 +75,13 @@ export function Window({ windowData, children }) {
         `}
       data-animation={windowData.animation.state}
       style={{
-        backgroundColor: background,
+        backgroundColor: bg0,
         left: position.x,
         top: position.y,
         width: size.width,
         height: size.height,
         zIndex: isFocused ? 10 : 1,
-        border: `${borderWidth}px solid ${isFocused ? borderColor : borderColorUnfocused}`,
+        border: `2px solid ${isFocused ? accent : fg2}`,
         // borderRadius: `${borderRadius}px`
       }}
       onMouseMove={handleMouseDown}

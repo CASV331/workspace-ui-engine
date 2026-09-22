@@ -1,8 +1,11 @@
 import { useConfig } from "../../../../contexts/ConfigContext";
+import { useDesktop } from "../../../../contexts/DesktopContext";
 
 export function Workspaces() {
     
-  const { config, desktopState, switchDesktop } = useConfig();
+  const { config } = useConfig();
+  const { desktopState, switchDesktop} = useDesktop()
+  
   const { activeDesktop, desktops } = desktopState;
   const { bg0, bg1, bg2, bg3, fg0, fg1, fg2, accent } = config.colors;
 

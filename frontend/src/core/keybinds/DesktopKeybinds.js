@@ -7,6 +7,7 @@ export function useKeybinds({
   switchWindowDesktop,
   setDmenuOpen,
   focused,
+  lockScreen,
   enabled = true
 }) {
   const isModPressed = useRef(false);
@@ -59,6 +60,10 @@ export function useKeybinds({
           e.preventDefault()
           openWindow("networkManager")
         }
+        if (e.key === "l") {
+          e.preventDefault()
+          lockScreen()
+        }
 
         if (e.key === "ArrowRight") moveFocusRef.current("right");
         if (e.key === "ArrowLeft") moveFocusRef.current("left");
@@ -88,5 +93,5 @@ export function useKeybinds({
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [enabled, openWindow, switchDesktop, switchWindowDesktop, setDmenuOpen, closeFocusedWindow, focused]);
+  }, [enabled, openWindow, switchDesktop, switchWindowDesktop, setDmenuOpen, closeFocusedWindow, focused, lockScreen]);
 }
