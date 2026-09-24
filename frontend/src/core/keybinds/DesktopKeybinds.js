@@ -8,6 +8,8 @@ export function useKeybinds({
   setDmenuOpen,
   focused,
   lockScreen,
+  floatingWindow,
+  moveFloatingWindow,
   enabled = true
 }) {
   const isModPressed = useRef(false);
@@ -64,6 +66,10 @@ export function useKeybinds({
           e.preventDefault()
           lockScreen()
         }
+        if (e.key === "v") {
+          e.preventDefault()
+          floatingWindow()
+        }
 
         if (e.key === "ArrowRight") moveFocusRef.current("right");
         if (e.key === "ArrowLeft") moveFocusRef.current("left");
@@ -93,5 +99,16 @@ export function useKeybinds({
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [enabled, openWindow, switchDesktop, switchWindowDesktop, setDmenuOpen, closeFocusedWindow, focused, lockScreen]);
+  }, [
+    enabled,
+    openWindow, 
+    switchDesktop, 
+    switchWindowDesktop, 
+    setDmenuOpen, 
+    closeFocusedWindow, 
+    focused, 
+    lockScreen,
+    floatingWindow,
+    moveFloatingWindow
+  ]);
 }

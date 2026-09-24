@@ -39,16 +39,18 @@ export function calculateLayout(node, x, y, width, height, depth = 0, gap = 0) {
 
     // Defines the direction in base the depth
     const isHorizontal = depth % 2 === 0
-    const halfWidth = isHorizontal ? (width - gap) / 2 : width
+    const ratio = node.ratio ?? 0.5
+    const leftWidth = isHorizontal ? (width - gap) * ratio : width
+    const rightWidth = isHorizontal ? (width - gap) * (1 - ratio) : width
     const halfHeight = isHorizontal ? height : (height - gap) / 2
 
     // Calculates the space for each child
-    const leftSpace = { x, y, width: halfWidth, height: halfHeight } // Divide the height
+    const leftSpace = { x, y, width: leftWidth, height: halfHeight } // Divide the height
 
     // Calculates the space for each right child
     const rightSpace = isHorizontal
-        ? { x: x + halfWidth + gap, y, width: halfWidth, height: halfHeight }
-        : { x, y: y + halfHeight + gap, width: halfWidth, height: halfHeight }
+        ? { x: x + halfWidth + gap, y, width: rightWidth, height: halfHeight }
+        : { x, y: y + halfHeight + gap, width: rightWidth, height: halfHeight }
 
     return {
         ...calculateLayout(node.left, leftSpace.x, leftSpace.y, leftSpace.width, leftSpace.height, depth + 1, gap),

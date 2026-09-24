@@ -20,7 +20,7 @@ const defaultDesktopState = {
           history: [],
           id: `win_${Date.now()}`,
           isFocused: true,
-          isMinimized: false,
+          isFloating: false,
           position: {
             x: 134.76686628622176,
             y: 98.04125311295269,
@@ -99,6 +99,17 @@ export function DesktopProvider({ children }) {
     });
   };
 
+  const floatingWindow = (windowId) => {
+    dispatch({
+      type: "SET_FLOATING_WINDOW",
+      payload: { windowId }
+    })
+  }
+
+  const moveFloatingWindow = (windowId) => {
+
+  }
+
   return (
     <DesktopContext.Provider
         value={{
@@ -111,6 +122,8 @@ export function DesktopProvider({ children }) {
             switchDesktop,
             moveWindow,
             switchWindowDesktop,
+            floatingWindow,
+            moveFloatingWindow
         }}
         >
             {children}

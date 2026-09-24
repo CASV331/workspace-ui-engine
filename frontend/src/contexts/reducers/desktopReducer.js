@@ -179,6 +179,25 @@ export function desktopReducer(state, action) {
           },
         },
       };
+
+    case "SET_FLOATING_WINDOW":
+      return {
+        ...state,
+        desktops: {
+          ...state.desktops,
+          [state.activeDesktop]: {
+            windows: state.desktops[state.activeDesktop].windows.map((w) => ({
+              ...w,
+              isFloating: w.id === action.payload.windowId,
+            })),
+          },
+        },
+      };
+
+    case "MOVE_FLOATING": 
+      return {
+
+      }
     default:
       return state;
   }
