@@ -14,10 +14,6 @@ const defaultDesktopState = {
     1: {
       windows: [
         {
-          animation: {
-            state: "opened",
-          },
-          history: [],
           id: `win_${Date.now()}`,
           isFocused: true,
           isFloating: false,
@@ -30,6 +26,10 @@ const defaultDesktopState = {
             height: 300,
           },
           type: "welcome",
+          animation: {
+            state: "opened",
+          },
+          history: [],
         },
       ],
     },
@@ -47,15 +47,15 @@ export function DesktopProvider({ children }) {
   const lockScreen = () => {
     dispatch({
       type: "LOCKSCREEN",
-      payload: {unlocked: false}
-    })
-  }
+      payload: { unlocked: false },
+    });
+  };
   const unlockScreen = () => {
     dispatch({
       type: "LOCKSCREEN",
-      payload: {unlocked: true}
-    })
-  }
+      payload: { unlocked: true },
+    });
+  };
 
   const openWindow = (type) => {
     // const app = APP_REGISTRY[type];
@@ -99,38 +99,36 @@ export function DesktopProvider({ children }) {
     });
   };
 
-  const floatingWindow = (windowId) => {
+  const setFloating = (windowId, floating, position, size) => {
     dispatch({
-      type: "SET_FLOATING_WINDOW",
-      payload: { windowId }
-    })
-  }
+      type: "SET_FLOATING",
+      payload: { windowId, floating, position, size },
+    });
+  };
 
-  const moveFloatingWindow = (windowId) => {
-
-  }
+  const moveFloatingWindow = (windowId) => {};
 
   return (
     <DesktopContext.Provider
-        value={{
-            lockScreen,
-            unlockScreen,
-            desktopState,
-            openWindow,
-            closeFocusedWindow,
-            focusWindow,
-            switchDesktop,
-            moveWindow,
-            switchWindowDesktop,
-            floatingWindow,
-            moveFloatingWindow
-        }}
-        >
-            {children}
-        </DesktopContext.Provider>
-  )
+      value={{
+        lockScreen,
+        unlockScreen,
+        desktopState,
+        openWindow,
+        closeFocusedWindow,
+        focusWindow,
+        switchDesktop,
+        moveWindow,
+        switchWindowDesktop,
+        setFloating,
+        moveFloatingWindow,
+      }}
+    >
+      {children}
+    </DesktopContext.Provider>
+  );
 }
 
 export function useDesktop() {
-    return useContext(DesktopContext)
+  return useContext(DesktopContext);
 }

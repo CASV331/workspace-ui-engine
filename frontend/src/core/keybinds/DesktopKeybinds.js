@@ -8,7 +8,7 @@ export function useKeybinds({
   setDmenuOpen,
   focused,
   lockScreen,
-  floatingWindow,
+  setFloating,
   moveFloatingWindow,
   enabled = true
 }) {
@@ -68,7 +68,8 @@ export function useKeybinds({
         }
         if (e.key === "v") {
           e.preventDefault()
-          floatingWindow()
+          console.log(focused.isFloating)
+          setFloating(focused.id, focused.isFloating, focused.position, focused.size)
         }
 
         if (e.key === "ArrowRight") moveFocusRef.current("right");
@@ -108,7 +109,7 @@ export function useKeybinds({
     closeFocusedWindow, 
     focused, 
     lockScreen,
-    floatingWindow,
+    setFloating,
     moveFloatingWindow
   ]);
 }

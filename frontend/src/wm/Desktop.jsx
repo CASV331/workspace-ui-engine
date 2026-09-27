@@ -35,7 +35,9 @@ function Desktop() {
     switchDesktop,
     switchWindowDesktop,
     lockScreen,
-    unlockScreen
+    unlockScreen,
+    setFloating,
+    moveFloatingWindow
   } = useDesktop()
   
   const unlocked = desktopState.unlocked
@@ -184,6 +186,8 @@ function Desktop() {
     setDmenuOpen,
     focused,
     lockScreen,
+    setFloating,
+    moveFloatingWindow,
     enabled: booted && unlocked
   });
 

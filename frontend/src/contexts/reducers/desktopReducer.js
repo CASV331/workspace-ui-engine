@@ -165,31 +165,36 @@ export function desktopReducer(state, action) {
           ...state.desktops,
           [state.activeDesktop]: {
             windows: state.desktops[state.activeDesktop].windows.map(
-              (window) =>
-                window.id === action.id
+              (w) =>
+                w.id === action.id
                   ? {
-                      ...window,
+                      ...w,
                       animation: {
-                        ...window.animation,
+                        ...w.animation,
                         state: action.state,
                       },
                     }
-                  : window,
+                  : w,
             ),
           },
         },
       };
 
-    case "SET_FLOATING_WINDOW":
+    case "SET_FLOATING":
       return {
         ...state,
         desktops: {
           ...state.desktops,
           [state.activeDesktop]: {
-            windows: state.desktops[state.activeDesktop].windows.map((w) => ({
-              ...w,
-              isFloating: w.id === action.payload.windowId,
-            })),
+            windows: state.desktops[state.activeDesktop].windows.map((w) => 
+              w.id === action.payload.windowId ? {
+                ...w,
+                isFloating: action.payload.floating,
+                position: action.payload.position,
+                size: action.payload.size
+              }
+              : w
+            ),
           },
         },
       };
