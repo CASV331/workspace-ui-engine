@@ -1,1 +1,8 @@
 .vercel
+AGENTS.md
+*.md
+.gitignore
+opencode.json
+skills-lock.json
+.agents
+node_modules

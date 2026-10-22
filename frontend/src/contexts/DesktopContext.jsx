@@ -100,9 +100,10 @@ export function DesktopProvider({ children }) {
   };
 
   const setFloating = (windowId, floating, position, size) => {
+    console.log(windowId, floating, position, size)
     dispatch({
       type: "SET_FLOATING",
-      payload: { windowId, floating, position, size },
+      payload: { windowId, floating, position, size},
     });
   };
 

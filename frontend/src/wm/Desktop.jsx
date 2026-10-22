@@ -95,12 +95,14 @@ function Desktop() {
   }, []);
 
   const layout = useMemo(() => {
+    const noFloat = currentWindows.filter((w) => !w.isFloating)
+    
     if (currentWindows.length === 0) return {};
     if (containerSize.width === 0) return {};
-
+    if (noFloat.length === 0) return {};
     // const { width, height } = containerRef.current.getBoundingClientRect();
 
-    const tree = buildTree(currentWindows);
+    const tree = buildTree(noFloat);
 
     const gapsIn = config.window.gap ?? 0;
 
@@ -188,7 +190,8 @@ function Desktop() {
     lockScreen,
     setFloating,
     moveFloatingWindow,
-    enabled: booted && unlocked
+    enabled: booted && unlocked,
+    layout
   });
 
   return (
@@ -221,12 +224,12 @@ function Desktop() {
                     windowData={{
                       ...win,
                       position: {
-                        x: layout[win.id]?.x ?? 0,
-                        y: layout[win.id]?.y ?? 0,
+                        x: layout[win.id]?.x ?? win.position.x ?? 0,
+                        y: layout[win.id]?.y ?? win.position.y ?? 0,
                       },
                       size: {
-                        width: layout[win.id]?.width ?? 300,
-                        height: layout[win.id]?.height ?? 200,
+                        width: layout[win.id]?.width ?? win.size.width ?? 300,
+                        height: layout[win.id]?.height ?? win.size.height ?? 200,
                       },
                     }}
                   >

@@ -189,9 +189,9 @@ export function desktopReducer(state, action) {
             windows: state.desktops[state.activeDesktop].windows.map((w) => 
               w.id === action.payload.windowId ? {
                 ...w,
-                isFloating: action.payload.floating,
-                position: action.payload.position,
-                size: action.payload.size
+                isFloating: action.payload.floating ?? true,
+                position: action.payload.position ?? w.position,
+                size: action.payload.size ?? w.size
               }
               : w
             ),

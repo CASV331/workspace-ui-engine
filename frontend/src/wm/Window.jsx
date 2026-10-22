@@ -7,14 +7,12 @@ export function Window({ windowData, children }) {
   const { focusWindow, moveWindow } = useDesktop()
   const { accent, bg0, fg2 } = config.colors;
 
-  const { id, position, size, isFocused } = windowData;
-  const [pos, setPos] = useState(position);
+  const { id, position, size, isFocused, isFloating } = windowData;
   const isDragging = useRef(false);
   const dragOffset = useRef({ x: 0, y: 0 });
 
   // Listen to mod button
   const isModPressed = useRef(false);
-  console.log(windowData)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "z") {
@@ -34,6 +32,7 @@ export function Window({ windowData, children }) {
   }, []);
 
   const handleMouseDown = (e) => {
+    const pos = e.currentTarget.getBoundingClientRect()
     // Focus window on click
     focusWindow(id);
 
@@ -41,12 +40,12 @@ export function Window({ windowData, children }) {
     if (!isModPressed.current) return;
 
     e.preventDefault();
-    isDragging.current = true;
-
+    if(windowData.isFloating) isDragging.current = true;
     dragOffset.current = {
       x: e.clientX - pos.x,
       y: e.clientY - pos.y,
     };
+    console.log(dragOffset.current)
 
     const handleMouseMove = (e) => {
       if (!isDragging.current) return;
@@ -54,13 +53,11 @@ export function Window({ windowData, children }) {
         x: e.clientX - dragOffset.current.x,
         y: e.clientY - dragOffset.current.y,
       };
-      setPos(newPos);
+      moveWindow(id, newPos);
     };
 
     const handleMouseUp = () => {
-      isDragging.current = false;
       // Sync final position with context
-      moveWindow(id, pos);
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
@@ -70,7 +67,7 @@ export function Window({ windowData, children }) {
   };
   return (
     <div
-      className={`flex absolute rounded-lg overflow-auto window backdrop-blur-xs
+      className={`flex absolute rounded-lg overflow-auto window backdrop-blur-xs z-10
         ${isModPressed.current && "cursor-grab"}
         `}
       data-animation={windowData.animation.state}
@@ -80,11 +77,11 @@ export function Window({ windowData, children }) {
         top: position.y,
         width: size.width,
         height: size.height,
-        zIndex: isFocused ? 10 : 1,
+        zIndex: isFloating ? isFocused ? 50 : 40 : isFocused ? 10 : 1,
         border: `2px solid ${isFocused ? accent : fg2}`,
         // borderRadius: `${borderRadius}px`
       }}
-      onMouseMove={handleMouseDown}
+      onMouseDown={handleMouseDown}
     >
       {children}
     </div>

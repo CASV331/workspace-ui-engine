@@ -10,7 +10,8 @@ export function useKeybinds({
   lockScreen,
   setFloating,
   moveFloatingWindow,
-  enabled = true
+  enabled = true,
+  layout,
 }) {
   const isModPressed = useRef(false);
   const isShiftPressed = useRef(false);
@@ -21,7 +22,7 @@ export function useKeybinds({
   }, [moveFocus]);
 
   useEffect(() => {
-    if (!enabled) return
+    if (!enabled) return;
     const handleKeyDown = (e) => {
       if (e.key === "p") {
         isShiftPressed.current = true;
@@ -55,21 +56,23 @@ export function useKeybinds({
           openWindow("help");
         }
         if (e.key === "f") {
-          e.preventDefault()
-          openWindow("fileManager")
+          e.preventDefault();
+          openWindow("fileManager");
         }
         if (e.key === "i") {
-          e.preventDefault()
-          openWindow("networkManager")
+          e.preventDefault();
+          openWindow("networkManager");
         }
         if (e.key === "l") {
-          e.preventDefault()
-          lockScreen()
+          e.preventDefault();
+          lockScreen();
         }
         if (e.key === "v") {
-          e.preventDefault()
-          console.log(focused.isFloating)
-          setFloating(focused.id, focused.isFloating, focused.position, focused.size)
+          e.preventDefault();
+          console.log(focused)
+          !focused.isFloating ? 
+          setFloating(focused.id, !focused.isFloating, {x: layout[focused.id].x, y: layout[focused.id].y}, {width: layout[focused.id].width, height: layout[focused.id].height})
+          : setFloating(focused.id, !focused.isFloating, focused.position, focused.size)
         }
 
         if (e.key === "ArrowRight") moveFocusRef.current("right");
@@ -102,14 +105,14 @@ export function useKeybinds({
     };
   }, [
     enabled,
-    openWindow, 
-    switchDesktop, 
-    switchWindowDesktop, 
-    setDmenuOpen, 
-    closeFocusedWindow, 
-    focused, 
+    openWindow,
+    switchDesktop,
+    switchWindowDesktop,
+    setDmenuOpen,
+    closeFocusedWindow,
+    focused,
     lockScreen,
     setFloating,
-    moveFloatingWindow
+    moveFloatingWindow,
   ]);
 }

@@ -22,7 +22,7 @@
 }
 @font-face {
   font-family: "JetBrains Mono";
-  src: url('/fonts/JetBrainsMonoNerdFont-Regular.tff') format("tff");
+  src: url('/fonts/JetBrainsMonoNerdFont-Regular.ttf') format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;

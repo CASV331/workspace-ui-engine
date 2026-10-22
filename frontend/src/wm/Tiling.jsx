@@ -30,6 +30,7 @@ export function buildTree(windows) {
 }
 
 export function calculateLayout(node, x, y, width, height, depth = 0, gap = 0) {
+    if (!node) return {}
     // If there is one leaf, it'll take the whole space
     if (node.type === "leaf") {
         return {
