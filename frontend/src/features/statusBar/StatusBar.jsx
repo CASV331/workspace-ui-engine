@@ -8,8 +8,8 @@ import { Workspaces } from "./modules/left/Workspaces";
 import { Help } from "./modules/center/Help";
 
 export function StatusBar() {
-  const { config } = useConfig()
-  const { bg0, bg1, bg2, bg3, fg0, fg1, fg2, accent } = config.colors;
+  const { config } = useConfig();
+  const { bg0, fg0 } = config.colors;
 
   return (
     <div className="items-center max-h-9">

@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react";
 import { useConfig } from "../../contexts/ConfigContext";
+import { hexToRgba } from "../../core/theme/buildConfig";
+
+const TIME_FORMATTER = new Intl.DateTimeFormat("en-US", {
+  hour: "2-digit",
+  minute: "2-digit",
+});
+
+const DATE_FORMATTER = new Intl.DateTimeFormat("es-MX", {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+});
 
 export function LockScreen({ onUnlock }) {
-  const hexToRgba = (hex, opacity) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-  };
-
   const { config } = useConfig();
-  const { bg0, bg1, fg0, fg1, fg2 } = config.colors;
+  const { bg0, bg1, fg0, fg2 } = config.colors;
 
-  const [time, setTime] = useState(new Date());
+  const [time, setTime] = useState(() => new Date());
   const [visible, setVisible] = useState(true);
   const [isUnlocking, setIsUnlocking] = useState(false);
 
@@ -21,16 +26,8 @@ export function LockScreen({ onUnlock }) {
     return () => clearInterval(interval);
   }, []);
 
-  const formattedTime = time.toLocaleString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
-  const detailedDate = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  }).format(new Date());
+  const formattedTime = TIME_FORMATTER.format(time);
+  const detailedDate = DATE_FORMATTER.format(time);
 
   const handleUnlock = () => {
     if (isUnlocking) return;
@@ -38,13 +35,16 @@ export function LockScreen({ onUnlock }) {
     setVisible(false);
   };
 
-  const handleTransitionEnd = () => {
+  const handleTransitionEnd = (event) => {
+    if (event.target !== event.currentTarget) return;
     if (isUnlocking) onUnlock();
   };
 
   return (
     <div
-      className={`absolute inset-0 scale-110 z-50 overflow-hidden transition-opacity duration-300 ease-out ${visible ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+      className={`absolute inset-0 z-90 scale-110 overflow-hidden transition-opacity duration-300 ease-out ${
+        visible ? "opacity-100" : "pointer-events-none opacity-0"
+      }`}
       onTransitionEnd={handleTransitionEnd}
     >
       <div
@@ -62,42 +62,32 @@ export function LockScreen({ onUnlock }) {
         style={{ backgroundColor: hexToRgba(fg2, 0.1) }}
       />
 
-      <div className="relative flex flex-col items-center justify-between h-full w-full">
+      <div className="relative flex h-full w-full flex-col items-center justify-between">
         <div className="py-30">
           <p className="w-full">
-            <span className="text-6xl lg:text-8xl text-center opacity-90">
+            <span className="text-center text-6xl opacity-90 lg:text-8xl">
               {formattedTime}
             </span>
           </p>
-          <p className="mt-6 text-center text-xl lg:text-2xl opacity-90">
+          <p className="mt-6 text-center text-xl opacity-90 lg:text-2xl">
             {detailedDate}
           </p>
         </div>
-        <div className="w-full h-full flex flex-col items-center">
+
+        <div className="flex h-full w-full flex-col items-center">
           <input
-            className="w-2/8 lg:w-2/8 p-2 rounded-full outline-none"
-            style={{
-              backgroundColor: bg0,
-              color: fg0,
-            }}
+            className="w-2/8 rounded-full p-2 outline-none lg:w-2/8"
+            style={{ backgroundColor: bg0, color: fg0 }}
             readOnly
             value="Password"
             type="password"
           />
           <button
-            className="w-2/9 lg:w-2/9 rounded-xl mt-8 p-1 hover:opacity-80"
-            style={{
-              backgroundColor: fg0,
-              color: bg1,
-            }}
+            className="mt-8 w-2/9 cursor-pointer rounded-xl p-1 hover:opacity-80 lg:w-2/9"
+            style={{ backgroundColor: fg0, color: bg1 }}
             onClick={handleUnlock}
           >
-            <span
-              className="
-          opacity-90 font-bold"
-            >
-              Click to unlock
-            </span>
+            <span className="font-bold opacity-90">Click to unlock</span>
           </button>
         </div>
       </div>

@@ -1,20 +1,24 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useConfig } from "../../../../contexts/ConfigContext";
 import { useNetwork } from "../../../../contexts/NetworkContext";
+import { useDesktopActions } from "../../../../contexts/DesktopContext";
 
-export function NetworkPanel({ state, change, isOpen, onClose }) {
-  const { config, openWindow } = useConfig();
+export function NetworkPanel({ isOpen, onClose }) {
+  const { config } = useConfig();
+  const { openWindow } = useDesktopActions();
   const { networkState, toggleWifi } = useNetwork();
 
-  const { bg0, bg1, bg3, fg0, fg1, fg2, accent } = config.colors;
+  const { bg0, bg1, bg3, fg0, fg1, accent } = config.colors;
 
   useEffect(() => {
-    const handleKey = (e) => {
-      if (e.key === "Escape") onClose();
+    if (!isOpen) return;
+
+    const handleKey = (event) => {
+      if (event.key === "Escape") onClose();
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [onClose]);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -29,13 +33,12 @@ export function NetworkPanel({ state, change, isOpen, onClose }) {
         borderRadius: "8px",
         padding: "12px",
         width: "280px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+        boxShadow: `0 4px 12px ${bg0}`,
       }}
     >
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <span className="font-bold">Wi-Fi</span>
-
           <span className="text-xs" style={{ color: fg1 }}>
             {!wifiEnabled
               ? "Disabled"
@@ -52,12 +55,9 @@ export function NetworkPanel({ state, change, isOpen, onClose }) {
             checked={wifiEnabled}
             onChange={toggleWifi}
           />
-
           <div
             className="h-6 w-11 rounded-full transition-colors peer-focus:outline-none"
-            style={{
-              backgroundColor: wifiEnabled ? accent : bg3,
-            }}
+            style={{ backgroundColor: wifiEnabled ? accent : bg3 }}
           >
             <div
               className="absolute top-0.5 h-5 w-5 rounded-full transition-transform"
@@ -78,7 +78,6 @@ export function NetworkPanel({ state, change, isOpen, onClose }) {
           <span className="text-xs" style={{ color: fg1 }}>
             SSID
           </span>
-
           <span className="font-medium">
             {wifiEnabled && connected ? ssid : "Not connected"}
           </span>
@@ -88,18 +87,16 @@ export function NetworkPanel({ state, change, isOpen, onClose }) {
           <span className="text-xs" style={{ color: fg1 }}>
             Local IP
           </span>
-
-          <span className="font-mono text-xs">{wifiEnabled && connected ? localIp : "-"}</span>
+          <span className="font-mono text-xs">
+            {wifiEnabled && connected ? localIp : "-"}
+          </span>
         </div>
       </div>
 
       <button
         type="button"
-        className="w-full rounded-md px-3 py-2 text-sm font-medium cursor-pointer"
-        style={{
-          backgroundColor: accent,
-          color: bg1,
-        }}
+        className="w-full cursor-pointer rounded-md px-3 py-2 text-sm font-medium"
+        style={{ backgroundColor: accent, color: bg1 }}
         onClick={() => openWindow("networkManager")}
       >
         More

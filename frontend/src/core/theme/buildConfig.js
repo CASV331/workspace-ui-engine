@@ -1,27 +1,29 @@
 import { defaultTheme } from "./themeTokens";
 
+export function hexToRgba(hex, opacity = 1) {
+  if (typeof hex !== "string" || hex.length < 7) return `rgba(0, 0, 0, ${opacity})`;
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
+
 export function buildConfigFromTokens(
-  tokens = defaultTokens,
-  wallpaperUrl = "/assets/wallpapers/anime_girl_white_hair.png",
+  tokens = defaultTheme.tokens,
+  wallpaperUrl = defaultTheme.wallpaper,
 ) {
-  const hexToRgba = (hex, opacity) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-  };
   const bg0 = hexToRgba(tokens.bg0, 0.9);
 
   return {
     colors: {
       primary: tokens.primary,
       secondary: tokens.secondary,
-      tertiary: tokens.tertiary,
+      tertiary: tokens.tertiary ?? tokens.secondary,
       surface: tokens.surface,
-      surfaceVarian: tokens.surfaceVarian,
+      surfaceVariant: tokens.surfaceVariant ?? tokens.surface,
       background: tokens.background,
       onSurface: tokens.onSurface,
-      onBackground: tokens.onBackground,
+      onBackground: tokens.onBackground ?? tokens.onSurface,
       outline: tokens.outline,
       bg0,
       bg1: tokens.bg1,
@@ -30,7 +32,6 @@ export function buildConfigFromTokens(
       fg0: tokens.fg0,
       fg1: tokens.fg1,
       fg2: tokens.fg2,
-
       accent: tokens.accent,
     },
     wallpaper: {
@@ -49,11 +50,10 @@ export function buildConfigFromTokens(
       backgroundOpacity: 0.8,
       borderColor: tokens.primary,
       borderColorUnfocused: tokens.outline,
-      borderWidth: 1,
+      borderWidth: 2,
       borderRadius: 8,
       gap: 4,
       borderOpacity: 0.8,
-      borderWidth: 2,
       textColor: tokens.onSurface,
       fontSize: 12,
     },

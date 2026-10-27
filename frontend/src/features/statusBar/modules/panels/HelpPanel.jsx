@@ -1,64 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { useConfig } from "../../../../contexts/ConfigContext";
-
-const KEYBINDS = [
-  {
-    key: "Z + Return",
-    description: "Open terminal",
-  },
-  {
-    key: "Z + Backspace",
-    description: "Close window",
-  },
-  {
-    key: "Z + M",
-    description: "Music Player",
-  },
-  {
-    key: "Z + A",
-    description: "Cava",
-  },
-  {
-    key: "Z + D",
-    description: "Wallpaper menu",
-  },
-  {
-    key: "Z + ←",
-    description: "Focus left window",
-  },
-  {
-    key: "Z + →",
-    description: "Focus right window",
-  },
-  {
-    key: "Z + ↑",
-    description: "Focus upper window",
-  },
-  {
-    key: "Z + ↓",
-    description: "Focus lower window",
-  },
-  {
-    key: "Z + 1-9",
-    description: "Switch desktop",
-  },
-  {
-    key: "Z + P + 1-9",
-    description: "Move window to desktop",
-  },
-];
+import { KEYBINDS } from "../../../../core/keybinds/keybindDocs";
 
 export function HelpPanel({ onClose }) {
   const { config } = useConfig();
 
-  const { bg1, fg0, fg1, accent } = config.colors;
+  const { bg0, bg1, bg2, bg3, fg0, fg1, accent } = config.colors;
 
   const panelRef = useRef(null);
 
-  const [position, setPosition] = useState({
+  const [position, setPosition] = useState(() => ({
     x: window.innerWidth - 360,
     y: 60,
-  });
+  }));
 
   const dragRef = useRef({
     dragging: false,
@@ -67,7 +21,7 @@ export function HelpPanel({ onClose }) {
   });
 
   const handleMouseDown = (e) => {
-    if (e.button !== 0) return;
+    if (e.button !== 0 || !panelRef.current) return;
 
     const rect = panelRef.current.getBoundingClientRect();
 
@@ -88,7 +42,6 @@ export function HelpPanel({ onClose }) {
         x: e.clientX - dragRef.current.offsetX,
         y: e.clientY - dragRef.current.offsetY,
       });
-      console.log(position);
     };
 
     const handleMouseUp = () => {
@@ -110,7 +63,7 @@ export function HelpPanel({ onClose }) {
     <div
       ref={panelRef}
       onClick={(e) => e.stopPropagation()}
-      className="fixed z-100 w-85 overflow-hidden rounded-lg"
+      className="fixed z-10 w-85 overflow-hidden rounded-lg"
       style={{
         left: position.x,
         top: position.y,
@@ -125,7 +78,7 @@ export function HelpPanel({ onClose }) {
         backdropFilter: "blur(12px)",
         WebkitBackdropFilter: "blur(12px)",
 
-        boxShadow: "0 8px 30px rgba(0,0,0,0.35)",
+        boxShadow: `0 8px 30px ${bg0}`,
       }}
     >
       <div
@@ -158,7 +111,7 @@ export function HelpPanel({ onClose }) {
               key={bind.key}
               className="grid grid-cols-[150px_1fr] items-center gap-3 rounded-md px-2 py-1.5"
               style={{
-                backgroundColor: "rgba(0, 0, 0, 0.12)",
+                backgroundColor: bg2,
               }}
             >
               <kbd
@@ -166,7 +119,7 @@ export function HelpPanel({ onClose }) {
                 style={{
                   color: accent,
                   border: `1px solid ${accent}`,
-                  backgroundColor: "rgba(0,0,0,0.15)",
+                  backgroundColor: bg3,
                 }}
               >
                 {bind.key}

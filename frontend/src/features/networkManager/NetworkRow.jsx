@@ -1,8 +1,8 @@
 import { useConfig } from "../../contexts/ConfigContext";
-import { useNetwork } from "../../contexts/NetworkContext";
+
 export function NetworkRow({ network, type, selected, onClick }) {
-    const { config } = useConfig();
-    const { bg0, fg0 } = config.colors;
+  const { config } = useConfig();
+  const { bg0, fg0 } = config.colors;
 
   return (
     <button
@@ -11,8 +11,7 @@ export function NetworkRow({ network, type, selected, onClick }) {
         type === "known"
           ? "grid grid-cols-[1.5fr_1fr_.7fr_1fr_.5fr]"
           : "grid grid-cols-[2fr_1fr_.5fr]"
-      }
-            px-1`}
+      } px-1`}
       style={{
         backgroundColor: selected ? fg0 : "transparent",
         color: selected ? bg0 : fg0,

@@ -1,47 +1,45 @@
 import { useState } from "react";
 import { useConfig } from "../../contexts/ConfigContext";
 import { useNetwork } from "../../contexts/NetworkContext";
-import { NetworkSection } from "./NetworkSection";
 import { DeviceInfo } from "./DeviceInfo";
+import { NetworkSection } from "./NetworkSection";
+
+const KNOWN_NETWORKS = [
+  {
+    name: "Tenere5G",
+    security: "psk",
+    hidden: "false",
+    autoConnect: "true",
+    signal: 100,
+    connected: true,
+  },
+];
+
+const NEW_NETWORKS = [
+  { name: "Tenere2G", security: "psk", signal: 100 },
+  { name: "Zyxel_8DB1", security: "psk", signal: 78 },
+  { name: "tp-link", security: "psk", signal: 62 },
+  { name: "RUT200_23D9", security: "psk", signal: 92 },
+  { name: "Telia-0F6AA7", security: "psk", signal: 52 },
+];
 
 export function NetworkManager() {
   const { config } = useConfig();
-  const { bg0, bg1, bg3, fg0, fg1, fg2, accent } = config.colors;
+  const { bg0, fg0 } = config.colors;
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [newSelectedIndex, setNewSelectedIndex] = useState(0);
-  const { networkState, toggleWifi } = useNetwork();
+  const { networkState } = useNetwork();
   const { wifiEnabled, connected } = networkState;
 
-  const knownNetworks = [
-    {
-      name: "Tenere5G",
-      security: "psk",
-      hidden: "false",
-      autoConnect: "true",
-      signal: 100,
-      connected: true,
-    },
-  ];
-
-  const newNetworks = [
-    { name: "Tenere2G", security: "psk", signal: 100 },
-    { name: "Zyxel_8DB1", security: "psk", signal: 78 },
-    { name: "tp-link", security: "psk", signal: 62 },
-    { name: "RUT200_23D9", security: "psk", signal: 92 },
-    { name: "Telia-0F6AA7", security: "psk", signal: 52 },
-  ];
   return (
     <div
-      className="
-        flex h-full w-full flex-col
-        font-mono text-sm
-      "
+      className="flex h-full w-full flex-col font-mono text-sm"
       style={{ backgroundColor: bg0, color: fg0 }}
     >
       <NetworkSection
         title="Known Networks"
         type="known"
-        networks={knownNetworks}
+        networks={KNOWN_NETWORKS}
         selectedIndex={selectedIndex}
         onSelect={setSelectedIndex}
       />
@@ -49,15 +47,12 @@ export function NetworkManager() {
       <NetworkSection
         title="New Networks"
         type="new"
-        networks={newNetworks}
+        networks={NEW_NETWORKS}
         selectedIndex={newSelectedIndex}
         onSelect={setNewSelectedIndex}
       />
 
-      <DeviceInfo
-        powered={wifiEnabled}
-        state={connected}
-      />
+      <DeviceInfo powered={wifiEnabled} state={connected} />
 
       <div
         className="flex flex-wrap gap-x-3 px-2 text-xs"

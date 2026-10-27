@@ -1,28 +1,36 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-display: "Space Grotesk", "Inter", sans-serif;
+  --font-nf: "Nerd Font Symbols", "Inter", sans-serif;
+}
+
 @font-face {
   font-family: "Nerd Font Symbols";
-  src: url("/fonts/SymbolsNerdFontMono-Regular.ttf") format("woff2");
+  src: url("/fonts/SymbolsNerdFontMono-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url('/fonts/Inter-Regular.woff2') format("woff2");
+  src: url("/fonts/Inter-Regular.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url('/fonts/Inter-Medium.woff2') format("woff2");
+  src: url("/fonts/Inter-Medium.woff2") format("woff2");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "JetBrains Mono";
-  src: url('/fonts/JetBrainsMonoNerdFont-Regular.ttf') format("woff2");
+  src: url("/fonts/JetBrainsMonoNerdFont-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -33,92 +41,34 @@
 }
 
 body {
-    background-color: #1e1e2e;
-}
-
-.slider {
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-.slider::before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-input:checked + .slider {
   background-color: #1e1e2e;
 }
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
-}
-input:checked + .slider::before {
-  -webkit-transition: translateX(26px);
-  -ms-transform: translateX(26px);
-  transition: translateX(26px);
-  transform: translateX(26px)
-}
 
-/* Boot Animations */
-.boot-screen {
-  opacity: 1;
-  transition: opacity 0.5s ease;
-  pointer-events: all;
-}
-
-.boot-screen--fade-out {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.boot-progress {
-  width: 200px;
-  height: 4px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
-  overflow: hidden;
-  margin-top: 20px;
-}
-
-.boot-progress-bar {
-  height: 100%;
-  width: 0%;
-  animation: boot-progress 5s ease forwards;
-}
-
-@keyframes boot-progress {
-  from { width: 0%; }
-  to   { width: 100%; }
-}
 /* Window animations */
 .window {
-    transition:
-        transform 180ms cubic-bezier(.22,1,.36,1),
-        opacity 180ms;
+  transition:
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms,
+    scale 180ms;
 }
 
-.window[data-animation="opening"]{
-    opacity: 0;
-    transform: scale(.92);
+.window[data-animation="opening"] {
+  opacity: 0;
+  scale: 0.92;
 }
 
-.window[data-animation="opened"]{
-    opacity: 1;
-    transform: scale(1);
+.window[data-animation="opened"] {
+  opacity: 1;
+  scale: 1;
 }
 
-.window[data-animation="closing"]{
-    opacity: 0;
-    transform: scale(.95);
+.window[data-animation="closing"] {
+  opacity: 0;
+  scale: 0.95;
 }
 
-.window[data-animation="moving"]{
-    transform: translateX(100%)
+.window--dragging {
+  transition: none;
 }
 
 @keyframes slideInRight {

@@ -1,27 +1,20 @@
-// components/apps/MusicPlayer.jsx
-import { usePlayer } from "../../contexts/PlayerContext";
+import { usePlayer, usePlayerProgress } from "../../contexts/PlayerContext";
 import { useConfig } from "../../contexts/ConfigContext";
-import { useMemo } from "react";
+
+function formatTime(seconds) {
+  if (!Number.isFinite(seconds) || seconds < 0) return "00:00";
+  const minutes = Math.floor(seconds / 60)
+    .toString()
+    .padStart(2, "0");
+  const remaining = Math.floor(seconds % 60)
+    .toString()
+    .padStart(2, "0");
+  return `${minutes}:${remaining}`;
+}
 
 export function MusicPlayer() {
   const { config } = useConfig();
-  const {
-    primary,
-    surface,
-    surfaceVariant,
-    onSurface,
-    outline
-  } = config.colors;
-  const {
-    background,
-    backgroundOpacity,
-    borderColor,
-    borderOpacity,
-    borderWidth,
-    textColor,
-    fontSize,
-  } = config.window;
-
+  const { accent, bg2, fg0, fg2 } = config.colors;
 
   const {
     playerState,
@@ -31,113 +24,80 @@ export function MusicPlayer() {
     next,
     prev,
     seek,
-    setVolume,
     selectSong,
   } = usePlayer();
-  const { isPlaying, currentTime, duration, volume, currentIndex } =
-    playerState;
-
-  const formatTime = (s) => {
-    const m = Math.floor(s / 60)
-      .toString()
-      .padStart(2, "0");
-    const sec = Math.floor(s % 60)
-      .toString()
-      .padStart(2, "0");
-    return `${m}:${sec}`;
-  };
-
+  const { currentTime, duration } = usePlayerProgress();
+  const { isPlaying, currentIndex } = playerState;
 
   return (
     <div
-      className="flex flex-col w-full h-full gap-3 p-4 font-mono text-xs"
-      style={{ backgroundColor: "transparent", color: onSurface }}
+      className="flex h-full w-full flex-col gap-3 p-4 font-mono text-xs"
+      style={{ backgroundColor: "transparent", color: fg0 }}
     >
-      {/* Header */}
-      <div className="flex justify-between" style={{ color: outline }}>
+      <div className="flex justify-between" style={{ color: fg2 }}>
         <span>rmpc</span>
         <span>
           {currentIndex + 1} / {songs.length}
         </span>
       </div>
 
-      {/* Info canción */}
       <div
-        className="p-2 rounded border"
-        style={{ backgroundColor: surfaceVariant, borderColor: outline }}
+        className="rounded border p-2"
+        style={{ backgroundColor: bg2, borderColor: fg2 }}
       >
-        <div className="truncate" style={{ color: primary }}>
+        <div className="truncate" style={{ color: accent }}>
           {currentSong?.name ?? "Unknown"}
         </div>
-        <div style={{ color: outline }}>Local Library</div>
+        <div style={{ color: fg2 }}>Local Library</div>
       </div>
 
-      {/* Progreso */}
       <div className="flex items-center gap-2">
-        <span style={{ color: outline }}>{formatTime(currentTime)}</span>
+        <span style={{ color: fg2 }}>{formatTime(currentTime)}</span>
         <input
           type="range"
           min={0}
           max={duration || 100}
           step={0.1}
           value={currentTime}
-          onChange={(e) => seek(parseFloat(e.target.value))}
+          onChange={(event) => seek(parseFloat(event.target.value))}
           className="flex-1 cursor-pointer"
-          style={{ accentColor: primary }}
+          style={{ accentColor: accent }}
         />
-        <span style={{ color: outline }}>{formatTime(duration)}</span>
+        <span style={{ color: fg2 }}>{formatTime(duration)}</span>
       </div>
 
-      {/* Controles */}
-      <div className="flex justify-center items-center gap-6">
-        <button onClick={prev} style={{ color: onSurface }}>
+      <div className="flex items-center justify-center gap-6">
+        <button onClick={prev} style={{ color: fg0 }} className="cursor-pointer">
           ⏮
         </button>
         <button
           onClick={togglePlay}
-          className="text-lg"
-          style={{ color: primary }}
+          className="cursor-pointer text-lg"
+          style={{ color: accent }}
         >
           {isPlaying ? "⏸" : "▶"}
         </button>
-        <button onClick={next} style={{ color: onSurface }}>
+        <button onClick={next} style={{ color: fg0 }} className="cursor-pointer">
           ⏭
         </button>
       </div>
 
-      {/* Volumen */}
-      {/* <div className="flex items-center gap-2">
-        <span style={{ color: outline }}>vol</span>
-        <input
-          type="range"
-          min={0}
-          max={1}
-          step={0.01}
-          value={volume}
-          onChange={(e) => setVolume(parseFloat(e.target.value))}
-          className="flex-1 cursor-pointer"
-          style={{ accentColor: primary }}
-        />
-        <span style={{ color: outline }}>{Math.round(volume * 100)}%</span>
-      </div> */}
-
-      {/* Lista */}
       <div
-        className="flex-1 overflow-y-auto border rounded"
-        style={{ borderColor: outline }}
+        className="flex-1 overflow-y-auto rounded border"
+        style={{ borderColor: fg2 }}
       >
-        {songs.map((song, i) => (
+        {songs.map((song, index) => (
           <button
             key={song.id}
-            onClick={() => selectSong(i)}
-            className="w-full text-left px-2 py-1 truncate hover:opacity-70"
+            onClick={() => selectSong(index)}
+            className="w-full cursor-pointer truncate px-2 py-1 text-left hover:opacity-70"
             style={{
               backgroundColor:
-                i === currentIndex ? surfaceVariant : "transparent",
-              color: i === currentIndex ? primary : onSurface,
+                index === currentIndex ? bg2 : "transparent",
+              color: index === currentIndex ? accent : fg0,
             }}
           >
-            {i === currentIndex && isPlaying ? "▶ " : "  "}
+            {index === currentIndex && isPlaying ? "▶ " : "  "}
             {song.name}
           </button>
         ))}

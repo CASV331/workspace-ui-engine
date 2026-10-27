@@ -6,29 +6,69 @@
       "keybind": ["Z", "Enter"]
     },
     {
-        "id": 2,
-        "feature": "Quit",
-        "keybind": ["Z", "Q"] 
+      "id": 2,
+      "feature": "Close window",
+      "keybind": ["Z", "Q"]
     },
     {
-        "id": 3,
-        "feature": "Workspaces selection",
-        "keybind": ["Z", "Num"]
+      "id": 3,
+      "feature": "Theme menu",
+      "keybind": ["Z", "D"]
     },
     {
-        "id": 4,
-        "feature": "Move windows to workspaces",
-        "keybind": ["Z", "P", "Num"]
+      "id": 4,
+      "feature": "Music Player",
+      "keybind": ["Z", "M"]
     },
     {
-        "id": 5,
-        "feature": "Music Player",
-        "keybind": ["Z", "M"]
+      "id": 5,
+      "feature": "Audio Visualizer",
+      "keybind": ["Z", "A"]
     },
     {
-        "id": 6,
-        "feature": "Audio Visualizer",
-        "keybind": ["Z", "A"]
+      "id": 6,
+      "feature": "Keybinds",
+      "keybind": ["Z", "H"]
+    },
+    {
+      "id": 7,
+      "feature": "File manager",
+      "keybind": ["Z", "F"]
+    },
+    {
+      "id": 8,
+      "feature": "Network manager",
+      "keybind": ["Z", "I"]
+    },
+    {
+      "id": 9,
+      "feature": "Lock screen",
+      "keybind": ["Z", "L"]
+    },
+    {
+      "id": 10,
+      "feature": "Toggle floating",
+      "keybind": ["Z", "V"]
+    },
+    {
+      "id": 11,
+      "feature": "Focus window",
+      "keybind": ["Z", "Arrow"]
+    },
+    {
+      "id": 12,
+      "feature": "Switch desktop",
+      "keybind": ["Z", "1-3"]
+    },
+    {
+      "id": 13,
+      "feature": "Move window to desktop",
+      "keybind": ["Z", "P", "1-3"]
+    },
+    {
+      "id": 14,
+      "feature": "Close active panel",
+      "keybind": ["Escape"]
     }
   ]
 }

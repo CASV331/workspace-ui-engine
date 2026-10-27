@@ -1,89 +1,107 @@
-import { useRef, useState, useEffect } from "react";
+import { memo, useRef } from "react";
 import { useConfig } from "../contexts/ConfigContext";
-import { useDesktop } from "../contexts/DesktopContext"
+import { useDesktopActions } from "../contexts/DesktopContext";
+import { isModPressed, useModPressed } from "../core/keybinds/modifierKey";
 
-export function Window({ windowData, children }) {
+export const Window = memo(function Window({
+  id,
+  x,
+  y,
+  width,
+  height,
+  isFocused,
+  isFloating,
+  animationState,
+  children,
+}) {
   const { config } = useConfig();
-  const { focusWindow, moveWindow } = useDesktop()
+  const { focusWindow, moveWindow, setFloating } = useDesktopActions();
   const { accent, bg0, fg2 } = config.colors;
+  const modPressed = useModPressed();
 
-  const { id, position, size, isFocused, isFloating } = windowData;
-  const isDragging = useRef(false);
-  const dragOffset = useRef({ x: 0, y: 0 });
+  const elementRef = useRef(null);
+  const dragRef = useRef(null);
+  const rafRef = useRef(0);
+  const lastPositionRef = useRef({ x, y });
 
-  // Listen to mod button
-  const isModPressed = useRef(false);
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "z") {
-        isModPressed.current = true;
-      }
-    };
-    const handleKeyUp = (e) => {
-      if (e.key === "z") isModPressed.current = false;
-    };
+  const finishDrag = (event, commit) => {
+    const drag = dragRef.current;
+    if (!drag) return;
 
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, []);
+    dragRef.current = null;
+    cancelAnimationFrame(rafRef.current);
+    elementRef.current?.classList.remove("window--dragging");
 
-  const handleMouseDown = (e) => {
-    const pos = e.currentTarget.getBoundingClientRect()
-    // Focus window on click
+    try {
+      event.currentTarget.releasePointerCapture(drag.pointerId);
+    } catch {
+      // El puntero ya se liberó.
+    }
+
+    if (commit) moveWindow(id, lastPositionRef.current);
+  };
+
+  const handlePointerDown = (event) => {
     focusWindow(id);
 
-    // Drag if mod is pressed
-    if (!isModPressed.current) return;
+    if (event.button !== 0 || !isModPressed()) return;
 
-    e.preventDefault();
-    if(windowData.isFloating) isDragging.current = true;
-    dragOffset.current = {
-      x: e.clientX - pos.x,
-      y: e.clientY - pos.y,
-    };
-    console.log(dragOffset.current)
+    if (!isFloating) {
+      setFloating(id, true, { x, y }, { width, height });
+    }
 
-    const handleMouseMove = (e) => {
-      if (!isDragging.current) return;
-      const newPos = {
-        x: e.clientX - dragOffset.current.x,
-        y: e.clientY - dragOffset.current.y,
-      };
-      moveWindow(id, newPos);
+    event.preventDefault();
+    lastPositionRef.current = { x, y };
+    dragRef.current = {
+      pointerId: event.pointerId,
+      offsetX: event.clientX - x,
+      offsetY: event.clientY - y,
     };
 
-    const handleMouseUp = () => {
-      // Sync final position with context
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+    event.currentTarget.setPointerCapture(event.pointerId);
+    elementRef.current?.classList.add("window--dragging");
   };
+
+  const handlePointerMove = (event) => {
+    const drag = dragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    const position = {
+      x: event.clientX - drag.offsetX,
+      y: event.clientY - drag.offsetY,
+    };
+    lastPositionRef.current = position;
+
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      if (elementRef.current) {
+        elementRef.current.style.transform = `translate3d(${position.x}px, ${position.y}px, 0)`;
+      }
+    });
+  };
+
   return (
     <div
-      className={`flex absolute rounded-lg overflow-auto window backdrop-blur-xs z-10
-        ${isModPressed.current && "cursor-grab"}
-        `}
-      data-animation={windowData.animation.state}
+      ref={elementRef}
+      className={`window absolute flex overflow-auto rounded-lg backdrop-blur-xs ${
+        modPressed ? "cursor-grab" : ""
+      }`}
+      data-animation={animationState}
       style={{
         backgroundColor: bg0,
-        left: position.x,
-        top: position.y,
-        width: size.width,
-        height: size.height,
-        zIndex: isFloating ? isFocused ? 50 : 40 : isFocused ? 10 : 1,
+        transform: `translate3d(${x}px, ${y}px, 0)`,
+        width,
+        height,
+        zIndex: isFloating ? (isFocused ? 50 : 40) : isFocused ? 10 : 1,
         border: `2px solid ${isFocused ? accent : fg2}`,
-        // borderRadius: `${borderRadius}px`
       }}
-      onMouseDown={handleMouseDown}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={(event) => finishDrag(event, true)}
+      onPointerCancel={(event) => finishDrag(event, true)}
+      onLostPointerCapture={(event) => finishDrag(event, true)}
     >
       {children}
     </div>
   );
-}
+});

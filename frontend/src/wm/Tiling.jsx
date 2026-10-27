@@ -50,7 +50,7 @@ export function calculateLayout(node, x, y, width, height, depth = 0, gap = 0) {
 
     // Calculates the space for each right child
     const rightSpace = isHorizontal
-        ? { x: x + rightWidth + gap, y, width: rightWidth, height: halfHeight }
+        ? { x: x + leftWidth + gap, y, width: rightWidth, height: halfHeight }
         : { x, y: y + halfHeight + gap, width: rightWidth, height: halfHeight }
 
     return {

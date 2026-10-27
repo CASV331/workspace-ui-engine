@@ -1,5 +1,5 @@
-import { useReducer } from "react";
-import { createContext, useContext, useState } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 // Themes imports
 import { buildConfigFromTokens } from "../core/theme/buildConfig.js";
 import { defaultTheme, themes } from "../core/theme/themeTokens.js";
@@ -16,7 +16,7 @@ function getInitialConfig() {
 export function ConfigProvider({ children }) {
   const [config, setConfig] = useState(getInitialConfig);
 
-  const updateConfig = (section, key, value) => {
+  const updateConfig = useCallback((section, key, value) => {
     setConfig((prev) => ({
       ...prev,
       [section]: {
@@ -24,29 +24,32 @@ export function ConfigProvider({ children }) {
         [key]: value,
       },
     }));
-  };
+  }, []);
 
-  const setTheme = (themeName) => {
+  const setTheme = useCallback((themeName) => {
     const theme = themes[themeName];
     if (!theme) return;
 
     saveTheme(themeName);
     setConfig(buildConfigFromTokens(theme.tokens, theme.wallpaper));
-  };
+  }, []);
 
-  return (
-    <ConfigContext.Provider
-      value={{
-        config,
-        updateConfig,
-        setTheme,
-      }}
-    >
-      {children}
-    </ConfigContext.Provider>
+  const value = useMemo(
+    () => ({
+      config,
+      updateConfig,
+      setTheme,
+    }),
+    [config, updateConfig, setTheme],
   );
+
+  return <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>;
 }
 
 export function useConfig() {
-  return useContext(ConfigContext);
+  const context = useContext(ConfigContext);
+  if (!context) {
+    throw new Error("useConfig debe usarse dentro de ConfigProvider");
+  }
+  return context;
 }

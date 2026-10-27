@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { createPortal } from "react-dom"
+import { createPortal } from "react-dom";
 import { useConfig } from "../../../../contexts/ConfigContext";
+import { useDesktopState } from "../../../../contexts/DesktopContext";
 import { BarIcon } from "../../shared/BarIcon";
 import { HelpPanel } from "../panels/HelpPanel";
+
 export function Help() {
   const { config } = useConfig();
-  const { bg0, bg1, bg3, fg0, fg2 } = config.colors;
+  const { unlocked } = useDesktopState();
+  const { bg0, bg3, fg0 } = config.colors;
 
   const [showHelp, setShowHelp] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -32,7 +35,7 @@ export function Help() {
             id="SVGRepo_tracerCarrier"
             strokeLinecap="round"
             strokeLinejoin="round"
-            stroke="#CCCCCC"
+            stroke={fg0}
             strokeWidth="0.05"
           ></g>
           <g id="SVGRepo_iconCarrier">
@@ -58,18 +61,19 @@ export function Help() {
           style={{
             backgroundColor: bg0,
             color: fg0,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+            boxShadow: `0 2px 8px ${bg0}`,
             whiteSpace: "nowrap",
           }}
         >
           Show info
         </div>
       )}
-      {showHelp && 
-      createPortal(    
+      {showHelp &&
+        unlocked &&
+        createPortal(
           <HelpPanel onClose={() => setShowHelp(false)} />,
-          document.body
-      )}
+          document.body,
+        )}
     </div>
   );
 }

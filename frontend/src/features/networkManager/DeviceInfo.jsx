@@ -1,12 +1,15 @@
-export function DeviceInfo({powered, state}) {
+import { useConfig } from "../../contexts/ConfigContext";
+
+export function DeviceInfo({ powered, state }) {
+  const { config } = useConfig();
+  const { fg0, fg2 } = config.colors;
+
   return (
     <fieldset
       className="mb-2 border px-3 pb-2"
-      style={{ borderColor: "var(--text-primary)" }}
+      style={{ borderColor: fg2, color: fg0 }}
     >
-      <legend className="px-2">
-        Device
-      </legend>
+      <legend className="px-2">Device</legend>
 
       <div className="grid grid-cols-6 text-center font-bold">
         <span>Name</span>
@@ -21,7 +24,7 @@ export function DeviceInfo({powered, state}) {
         <span>wlan0</span>
         <span>station</span>
         <span>{powered ? "On" : "Off"}</span>
-        <span>{state ? "Connected" : "Disconected"}</span>
+        <span>{state ? "Connected" : "Disconnected"}</span>
         <span>5.28 GHz</span>
         <span>WPA2-Personal</span>
       </div>

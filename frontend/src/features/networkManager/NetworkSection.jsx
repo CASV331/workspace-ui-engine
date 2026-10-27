@@ -1,6 +1,7 @@
-import { NetworkRow } from "./NetworkRow";
 import { useConfig } from "../../contexts/ConfigContext";
 import { useNetwork } from "../../contexts/NetworkContext";
+import { NetworkRow } from "./NetworkRow";
+
 export function NetworkSection({
   title,
   type,
@@ -9,9 +10,9 @@ export function NetworkSection({
   onSelect,
 }) {
   const { config } = useConfig();
-  const { bg0, bg1, bg3, fg0, fg1, fg2, accent } = config.colors;
-  const { networkState, toggleWifi } = useNetwork();
-  const { wifiEnabled, connected, ssid, localIp } = networkState;
+  const { fg0 } = config.colors;
+  const { networkState } = useNetwork();
+  const { wifiEnabled } = networkState;
 
   return (
     <fieldset
@@ -19,9 +20,9 @@ export function NetworkSection({
       style={{ borderColor: fg0 }}
     >
       <legend className="px-2" style={{ color: fg0 }}>
-        {" "}
-        {title}{" "}
+        {title}
       </legend>
+
       {type === "known" ? (
         <div className="grid grid-cols-[1.5fr_1fr_.7fr_1fr_.5fr] font-bold">
           <span>Name</span>
@@ -37,7 +38,8 @@ export function NetworkSection({
           <span className="text-right">Signal</span>
         </div>
       )}
-      { wifiEnabled && 
+
+      {wifiEnabled && (
         <div className="mt-2">
           {networks.map((network, index) => (
             <NetworkRow
@@ -49,7 +51,7 @@ export function NetworkSection({
             />
           ))}
         </div>
-      }
+      )}
     </fieldset>
   );
 }

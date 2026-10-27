@@ -1,9 +1,9 @@
 import { useConfig } from "../../../../contexts/ConfigContext";
 import { BarIcon } from "../../shared/BarIcon";
 
-export function Battery({ textColor }) {
+export function Battery() {
     const { config } = useConfig()
-    const { bg0, bg1, bg2, bg3, fg0, fg1, fg2, accent } = config.colors
+    const { bg3, accent } = config.colors
     return (
         <div
               className="flex items-center gap-1 rounded-lg"

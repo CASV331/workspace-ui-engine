@@ -1,24 +1,36 @@
-import { useState } from "react";
 import Desktop from "./wm/Desktop.jsx";
-import { ConfigProvider } from "./contexts/ConfigContext.jsx";
+import {
+  ConfigProvider,
+  useConfig,
+} from "./contexts/ConfigContext.jsx";
 import { PlayerProvider } from "./contexts/PlayerContext.jsx";
 import { NetworkProvider } from "./contexts/NetworkContext.jsx";
-import BootScreen from "./core/boot/BootScreen";
-import "./index.css";
 import { DesktopProvider } from "./contexts/DesktopContext.jsx";
+import "./index.css";
+
+function AppShell() {
+  const { config } = useConfig();
+  const { bg0, fg0 } = config.colors;
+
+  return (
+    <div
+      className="h-screen"
+      style={{ backgroundColor: bg0, color: fg0 }}
+    >
+      <Desktop />
+    </div>
+  );
+}
 
 function App() {
   return (
     <ConfigProvider>
       <DesktopProvider>
-      <PlayerProvider>
-        <NetworkProvider>
-        {/* flex items-center justify-center gap-4 lg:gap-6 */}
-        <div className="bg-gray-900 h-screen text-white">
-          <Desktop />
-        </div>
-        </NetworkProvider>
-      </PlayerProvider>
+        <PlayerProvider>
+          <NetworkProvider>
+            <AppShell />
+          </NetworkProvider>
+        </PlayerProvider>
       </DesktopProvider>
     </ConfigProvider>
   );

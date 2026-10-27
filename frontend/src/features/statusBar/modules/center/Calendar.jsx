@@ -3,7 +3,7 @@ import { useConfig } from "../../../../contexts/ConfigContext";
 
 export function Calendar() {
   const { config } = useConfig();
-  const { bg0, bg1, bg3, fg0, fg1, fg2, accent } = config.colors;
+  const { bg0, bg1, fg0, fg2, accent } = config.colors;
 
   const [viewDate, setViewDate] = useState(new Date());
 
@@ -49,7 +49,7 @@ export function Calendar() {
     setViewDate(new Date(year, month + 1, 1));
   };
 
-  const monthName = viewDate.toLocaleDateString("us-EN", {
+  const monthName = viewDate.toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
   });
@@ -62,7 +62,7 @@ export function Calendar() {
         borderRadius: "8px",
         padding: "12px",
         width: "280px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+        boxShadow: `0 4px 12px ${bg0}`,
       }}
     >
       <div className="flex items-center justify-between mb-2">

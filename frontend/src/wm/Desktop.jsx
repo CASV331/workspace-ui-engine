@@ -1,34 +1,20 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useConfig } from "../contexts/ConfigContext";
-import { useDesktop} from "../contexts/DesktopContext"
-import { Window } from "./Window";
-import { Terminal } from "../features/terminal/Terminal";
-import { StatusBar } from "../features/statusBar/StatusBar";
-import { useEffect, useRef, useState, useMemo } from "react";
-import { calculateLayout, buildTree } from "./Tiling";
-import { ThemeDmenu } from "../features/menu/Menu";
-import { APP_REGISTRY } from "../core/apps/registry";
-import { MusicPlayer } from "../features/music_player/Music_player";
-import { AudioVisualizer } from "../features/audio_visualizer/AudioVisualizer";
-import { playCloseAnimation } from "../core/animation/animationEngine";
-import BootScreen from "../core/boot/BootScreen";
-import { Welcome } from "../features/welcome/Welcome";
+import {
+  useDesktopActions,
+  useDesktopState,
+} from "../contexts/DesktopContext";
 import { useKeybinds } from "../core/keybinds/DesktopKeybinds";
-import { FileManager } from "../features/File_manager/FileManager";
-import { NetworkManager } from "../features/networkManager/NetworkManager";
+import BootScreen from "../core/boot/BootScreen";
+import { ThemeDmenu } from "../features/menu/Menu";
 import { LockScreen } from "../features/lockScreen/LockScreen";
+import { StatusBar } from "../features/statusBar/StatusBar";
+import { calculateLayout, buildTree } from "./Tiling";
+import { WindowHost } from "./WindowHost";
 
-const APPS = {
-  terminal: Terminal,
-  rmpc: MusicPlayer,
-  cava: AudioVisualizer,
-  welcome: Welcome,
-  fileManager: FileManager,
-  networkManager: NetworkManager,
-};
 function Desktop() {
   const { config } = useConfig();
   const {
-    desktopState,
     openWindow,
     closeFocusedWindow,
     focusWindow,
@@ -37,74 +23,72 @@ function Desktop() {
     lockScreen,
     unlockScreen,
     setFloating,
-    moveFloatingWindow
-  } = useDesktop()
-  
-  const unlocked = desktopState.unlocked
+  } = useDesktopActions();
+  const desktopState = useDesktopState();
+  const { activeDesktop, desktops, slideDirection, unlocked } = desktopState;
 
-  // State
   const [dmenuOpen, setDmenuOpen] = useState(false);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
-  const [slideDirection, setSlideDirection] = useState("right");
   const [booted, setBooted] = useState(false);
 
-  // Ref
-  const prevDesktopRef = useRef(desktopState.activeDesktop);
   const containerRef = useRef(null);
-  const { activeDesktop, desktops } = desktopState;
   const currentWindows = desktops[activeDesktop].windows;
-  // Get focused window
-  const focused = currentWindows.find((win) => win.isFocused === true);
+  const focused = currentWindows.find((window) => window.isFocused);
 
-  // Calculate layout
-  // useEffect(() => {
-  //   if (!containerRef.current) return;
-  //   const { width, height } = containerRef.current.getBoundingClientRect();
-  //   setContainerSize({ width, height });
-  // }, []);
+  const handleBootFinish = useCallback(() => setBooted(true), []);
 
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
+    const element = containerRef.current;
+    if (!element) return;
 
     const updateSize = () => {
-      const rect = el.getBoundingClientRect();
+      const rect = element.getBoundingClientRect();
       if (rect.width > 0 && rect.height > 0) {
-        setContainerSize((prev) => {
-          if (prev.width === rect.width && prev.height === rect.height)
-            return prev;
+        setContainerSize((previous) => {
+          if (
+            previous.width === rect.width &&
+            previous.height === rect.height
+          ) {
+            return previous;
+          }
 
           return { width: rect.width, height: rect.height };
         });
       }
     };
 
-    // Medición inicial inmediata
     updateSize();
 
-    // Observar cambios de tamaño
     const observer = new ResizeObserver(updateSize);
-    observer.observe(el);
+    observer.observe(element);
 
-    window.addEventListener("resize", updateSize);
+    return () => observer.disconnect();
+  }, [activeDesktop]);
 
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", updateSize);
-    };
-  }, []);
+  const tiledKey = currentWindows
+    .filter((window) => !window.isFloating)
+    .map((window) => window.id)
+    .join("|");
 
   const layout = useMemo(() => {
-    const noFloat = currentWindows.filter((w) => !w.isFloating)
-    
-    if (currentWindows.length === 0) return {};
-    if (containerSize.width === 0) return {};
-    if (noFloat.length === 0) return {};
-    // const { width, height } = containerRef.current.getBoundingClientRect();
+    const tiledIds = tiledKey ? tiledKey.split("|") : [];
+    if (
+      tiledIds.length === 0 ||
+      containerSize.width === 0 ||
+      containerSize.height === 0
+    ) {
+      return {};
+    }
 
-    const tree = buildTree(noFloat);
+    const windowsById = new Map(
+      currentWindows.map((window) => [window.id, window]),
+    );
+    const tiledWindows = tiledIds
+      .map((id) => windowsById.get(id))
+      .filter(Boolean);
+    const tree = buildTree(tiledWindows);
 
-    const gapsIn = config.window.gap ?? 0;
+    if (!tree) return {};
 
     return calculateLayout(
       tree,
@@ -113,71 +97,68 @@ function Desktop() {
       containerSize.width,
       containerSize.height,
       0,
-      gapsIn,
+      config.window.gap ?? 0,
     );
-  }, [currentWindows, containerSize, config.window.gap]);
+    // El layout solo depende de los ids tiled y del contenedor; el foco no lo invalida.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tiledKey, containerSize.width, containerSize.height, config.window.gap]);
 
-  useEffect(() => {
-    const prev = prevDesktopRef.current;
-    const current = desktopState.activeDesktop;
-    if (prev !== current) {
-      setSlideDirection(current > prev ? "right" : "left");
-      prevDesktopRef.current = current;
-    }
-  }, [desktopState.activeDesktop]);
+  const moveFocus = useCallback(
+    (direction) => {
+      if (!focused) return;
 
-  const moveFocus = (direction) => {
-    if (!focused) return;
+      const focusedLayout = layout[focused.id];
+      if (!focusedLayout) return;
 
-    const focusedLayout = layout[focused.id];
-    if (!focusedLayout) return;
-
-    const focusedCenter = {
-      x: focusedLayout.x + focusedLayout.width / 2,
-      y: focusedLayout.y + focusedLayout.height / 2,
-    };
-
-    const candidates = currentWindows.filter((win) => {
-      if (win.id === focused.id) return false; //Exclude the focused
-      const winLayout = layout[win.id];
-      if (!winLayout) return false;
-      const winCenter = {
-        x: winLayout.x + winLayout.width / 2,
-        y: winLayout.y + winLayout.height / 2,
+      const focusedCenter = {
+        x: focusedLayout.x + focusedLayout.width / 2,
+        y: focusedLayout.y + focusedLayout.height / 2,
       };
 
-      if (direction === "right") return winCenter.x > focusedCenter.x;
-      if (direction === "left") return winCenter.x < focusedCenter.x;
-      if (direction === "up") return winCenter.y < focusedCenter.y;
-      if (direction === "down") return winCenter.y > focusedCenter.y;
-    });
+      const candidates = currentWindows.filter((window) => {
+        if (window.id === focused.id) return false;
+        if (!layout[window.id]) return false;
 
-    if (candidates.length === 0) return;
+        const windowCenter = {
+          x: layout[window.id].x + layout[window.id].width / 2,
+          y: layout[window.id].y + layout[window.id].height / 2,
+        };
 
-    const closest = candidates.reduce((nearest, win) => {
-      const winCenter = {
-        x: layout[win.id].x + layout[win.id].width / 2,
-        y: layout[win.id].y + layout[win.id].height / 2,
-      };
+        if (direction === "right") return windowCenter.x > focusedCenter.x;
+        if (direction === "left") return windowCenter.x < focusedCenter.x;
+        if (direction === "up") return windowCenter.y < focusedCenter.y;
+        if (direction === "down") return windowCenter.y > focusedCenter.y;
+        return false;
+      });
 
-      const nearestCenter = {
-        x: layout[nearest.id].x + layout[nearest.id].width / 2,
-        y: layout[nearest.id].y + layout[nearest.id].height / 2,
-      };
+      if (candidates.length === 0) return;
 
-      const distanceToCurrent = Math.hypot(
-        winCenter.x - focusedCenter.x,
-        winCenter.y - focusedCenter.y,
-      );
-      const distanceToNearest = Math.hypot(
-        nearestCenter.x - focusedCenter.x,
-        nearestCenter.y - focusedCenter.y,
-      );
+      const closest = candidates.reduce((nearest, window) => {
+        const windowCenter = {
+          x: layout[window.id].x + layout[window.id].width / 2,
+          y: layout[window.id].y + layout[window.id].height / 2,
+        };
+        const nearestCenter = {
+          x: layout[nearest.id].x + layout[nearest.id].width / 2,
+          y: layout[nearest.id].y + layout[nearest.id].height / 2,
+        };
 
-      return distanceToCurrent < distanceToNearest ? win : nearest;
-    });
-    focusWindow(closest.id);
-  };
+        const distanceToCurrent = Math.hypot(
+          windowCenter.x - focusedCenter.x,
+          windowCenter.y - focusedCenter.y,
+        );
+        const distanceToNearest = Math.hypot(
+          nearestCenter.x - focusedCenter.x,
+          nearestCenter.y - focusedCenter.y,
+        );
+
+        return distanceToCurrent < distanceToNearest ? window : nearest;
+      });
+
+      focusWindow(closest.id);
+    },
+    [focused, layout, currentWindows, focusWindow],
+  );
 
   useKeybinds({
     openWindow,
@@ -189,58 +170,60 @@ function Desktop() {
     focused,
     lockScreen,
     setFloating,
-    moveFloatingWindow,
     enabled: booted && unlocked,
-    layout
+    layout,
   });
 
   return (
-    <div className="w-full h-full z-10 desktop-preview-container sticky top-0 bg-gray-900">
-      {!booted && <BootScreen onFinish={() => setBooted(true)} />}
-        {!unlocked && booted && <LockScreen onUnlock={unlockScreen} />}
+    <div
+      className="desktop-preview-container sticky top-0 z-10 h-full w-full"
+      style={{ backgroundColor: config.colors.bg0 }}
+    >
+      {!booted && <BootScreen onFinish={handleBootFinish} />}
+      {!unlocked && booted && <LockScreen onUnlock={unlockScreen} />}
+
+      <div
+        className="group relative flex h-full w-full flex-col overflow-hidden rounded-sm"
+        style={{
+          backgroundImage: `url(${config.wallpaper.url})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <StatusBar />
+
         <div
-          className="flex flex-col relative w-full h-full overflow-hidden group rounded-sm"
-          style={{
-            backgroundImage: `url(${config.wallpaper.url})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-          }}
+          key={activeDesktop}
+          className={`workspace-slide-${slideDirection} relative flex w-full flex-1 p-2`}
         >
-          <StatusBar />
           <div
-            // key={desktopState.activeDesktop} // fuerza remount al cambiar de escritorio
-            className={`workspace-slide-${slideDirection} relative flex flex-1 w-full p-2`}
+            ref={containerRef}
+            className="relative w-full flex-1 justify-between"
           >
-            <div
-              ref={containerRef}
-              className="relative flex-1 w-full justify-between"
-            >
-              {currentWindows.map((win) => {
-                const App = APPS[win.type];
-                return (
-                  <Window
-                    key={win.id}
-                    windowData={{
-                      ...win,
-                      position: {
-                        x: layout[win.id]?.x ?? win.position.x ?? 0,
-                        y: layout[win.id]?.y ?? win.position.y ?? 0,
-                      },
-                      size: {
-                        width: layout[win.id]?.width ?? win.size.width ?? 300,
-                        height: layout[win.id]?.height ?? win.size.height ?? 200,
-                      },
-                    }}
-                  >
-                    {App && <App />}
-                  </Window>
-                );
-              })}
-            </div>
+            {currentWindows.map((window) => {
+              const box = layout[window.id];
+
+              return (
+                <WindowHost
+                  key={window.id}
+                  id={window.id}
+                  type={window.type}
+                  x={box?.x ?? window.position?.x ?? 0}
+                  y={box?.y ?? window.position?.y ?? 0}
+                  width={box?.width ?? window.size?.width ?? 320}
+                  height={box?.height ?? window.size?.height ?? 240}
+                  isFocused={Boolean(window.isFocused)}
+                  isFloating={Boolean(window.isFloating)}
+                  animationState={window.animation?.state ?? "opened"}
+                />
+              );
+            })}
           </div>
-          <ThemeDmenu isOpen={dmenuOpen} onClose={() => setDmenuOpen(false)} />
         </div>
+
+        <ThemeDmenu isOpen={dmenuOpen} onClose={() => setDmenuOpen(false)} />
+      </div>
     </div>
   );
 }
